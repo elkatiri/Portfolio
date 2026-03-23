@@ -42,7 +42,7 @@ export const techStack = [
     category: "Frontend",
     items: [
       { name: "React", icon: SiReact, color: "#61DAFB" },
-      { name: "Next.js", icon: SiNextdotjs, color: "#ffffff" },
+      { name: "Next.js", icon: SiNextdotjs, color: "currentColor" },
       { name: "Tailwind CSS", icon: SiTailwindcss, color: "#06B6D4" },
       { name: "Bootstrap", icon: SiBootstrap, color: "#7952B3" },
       { name: "Sass", icon: SiSass, color: "#CC6699" },
@@ -52,7 +52,7 @@ export const techStack = [
     category: "Backend",
     items: [
       { name: "Node.js", icon: SiNodedotjs, color: "#339933" },
-      { name: "Express.js", icon: SiExpress, color: "#ffffff" },
+      { name: "Express.js", icon: SiExpress, color: "currentColor" },
       { name: "Laravel", icon: SiLaravel, color: "#FF2D20" },
       { name: "PHP", icon: SiPhp, color: "#777BB4" },
     ],
@@ -69,7 +69,7 @@ export const techStack = [
     items: [
       { name: "VS Code", icon: VscVscode, color: "#007ACC" },
       { name: "Git", icon: SiGit, color: "#F05032" },
-      { name: "GitHub", icon: SiGithub, color: "#ffffff" },
+      { name: "GitHub", icon: SiGithub, color: "currentColor" },
       { name: "Cloudinary", icon: SiCloudinary, color: "#3448C5" },
       { name: "Postman", icon: SiPostman, color: "#FF6C37" },
     ],
@@ -165,7 +165,7 @@ export const workflowSteps: {
 ];
 
 export const socialLinks = {
-  github: "https://github.com/ahmedelkatiri",
-  linkedin: "https://linkedin.com/in/ahmedelkatiri",
-  email: "ahmed.elkatiri@example.com",
+  github: "https://github.com/elkatiri",
+  linkedin: "https://www.linkedin.com/in/ahmed-elkatiri-a0347b3b2/",
+  email: "ahmedelkatiri2026@gmail.com",
 };

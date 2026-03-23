@@ -1,44 +1,43 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useScrollAnimation, fadeUp } from "@/hooks/useScrollAnimation";
+import { useGsapFadeUp } from "@/hooks/useGsap";
 
 interface SectionHeadingProps {
   title: string;
   subtitle?: string;
   align?: "left" | "center";
+  number?: string;
 }
 
 export default function SectionHeading({
   title,
   subtitle,
-  align = "center",
+  align = "left",
+  number,
 }: SectionHeadingProps) {
-  const [ref, controls] = useScrollAnimation();
+  const ref = useGsapFadeUp<HTMLDivElement>();
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial="hidden"
-      animate={controls}
-      variants={fadeUp}
-      className={`mb-20 ${align === "center" ? "text-center" : "text-left"}`}
+      className={`mb-14 md:mb-20 ${align === "center" ? "text-center" : "text-left"}`}
     >
-      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight leading-[1.15]">
-        {title.split(" ").map((word, i) =>
-          i === title.split(" ").length - 1 ? (
-            <span key={i} className="gradient-text">
-              {word}
-            </span>
-          ) : (
-            <span key={i}>{word} </span>
-          )
-        )}
+      {number && (
+        <span data-animate className="mono-label mb-4 block">
+          {number}
+        </span>
+      )}
+      <h2
+        data-animate
+        className="text-3xl md:text-4xl lg:text-[2.75rem] font-semibold tracking-tight leading-[1.15]"
+      >
+        {title}
       </h2>
       {subtitle && (
-        <p className="text-[var(--muted)] text-lg md:text-xl max-w-2xl mx-auto leading-8">{subtitle}</p>
+        <p data-animate className="text-[var(--fg-secondary)] text-base max-w-lg mt-4 leading-relaxed" style={{ marginInline: align === "center" ? "auto" : undefined }}>
+          {subtitle}
+        </p>
       )}
-      <div className="mt-8 h-1 w-20 rounded-full bg-[var(--primary)] mx-auto opacity-80" />
-    </motion.div>
+    </div>
   );
 }

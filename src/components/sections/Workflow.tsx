@@ -1,63 +1,36 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  useScrollAnimation,
-  fadeUp,
-  staggerContainer,
-} from "@/hooks/useScrollAnimation";
+import { useGsapFadeUp } from "@/hooks/useGsap";
 import SectionHeading from "@/components/ui/SectionHeading";
-import GlassCard from "@/components/ui/GlassCard";
 import { workflowSteps } from "@/data/portfolio";
 
 export default function Workflow() {
-  const [ref, controls] = useScrollAnimation();
+  const ref = useGsapFadeUp<HTMLDivElement>();
 
   return (
-    <section id="workflow" className="section-padding">
+    <section id="workflow" className="section-padding section-border">
       <div className="container-custom">
         <SectionHeading
-          title="My Workflow"
-          subtitle="Following Agile/Scrum methodology for efficient delivery"
+          number="04"
+          title="Process"
+          subtitle="Agile/Scrum methodology for efficient delivery"
         />
 
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={controls}
-          variants={staggerContainer}
-          className="relative"
-        >
-          {/* Connecting line */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent opacity-20 -translate-y-1/2" />
-
-          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-5">
-            {workflowSteps.map((step, i) => (
-              <motion.div key={step.step} variants={fadeUp}>
-                <GlassCard className="p-8 text-center relative h-full">
-                  {/* Step icon */}
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[var(--surface-light)] border border-[var(--border-clr)] mb-5">
-                    <step.icon className="w-7 h-7 text-[var(--primary)]" />
-                  </div>
-                  <div className="text-xs font-mono text-[var(--primary)] mb-4 tracking-wider leading-4">
-                    Step {step.step}
-                  </div>
-                  <h3 className="font-semibold text-lg md:text-xl mb-4 leading-snug">{step.title}</h3>
-                  <p className="text-sm md:text-base text-[var(--muted)] leading-7">
-                    {step.description}
-                  </p>
-
-                  {/* Arrow connector on large screens */}
-                  {i < workflowSteps.length - 1 && (
-                    <div className="hidden lg:flex absolute -right-4 top-1/2 -translate-y-1/2 text-[var(--primary)] opacity-40 z-10 text-xl">
-                      →
-                    </div>
-                  )}
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <div ref={ref} className="grid gap-px md:grid-cols-5 border border-[var(--border)] rounded-2xl overflow-hidden">
+          {workflowSteps.map((step) => (
+            <div
+              key={step.step}
+              data-animate
+              className="p-6 bg-[var(--surface)] hover:bg-[var(--surface-2)] transition-colors duration-300 group"
+            >
+              <span className="mono-label text-[var(--accent)] block mb-4">{step.step}</span>
+              <h3 className="font-semibold text-base text-[var(--fg)] mb-2 leading-snug">{step.title}</h3>
+              <p className="text-sm text-[var(--muted)] leading-relaxed">
+                {step.description}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

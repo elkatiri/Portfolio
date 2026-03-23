@@ -1,25 +1,20 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
-import { FiSend, FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
-import {
-  useScrollAnimation,
-  fadeUp,
-  staggerContainer,
-} from "@/hooks/useScrollAnimation";
+import { useState, useRef, type FormEvent } from "react";
+import { FiSend, FiGithub, FiLinkedin, FiMail, FiArrowUpRight } from "react-icons/fi";
+import { useGsapFadeUp } from "@/hooks/useGsap";
 import SectionHeading from "@/components/ui/SectionHeading";
-import GlassCard from "@/components/ui/GlassCard";
-import Button from "@/components/ui/Button";
 import { socialLinks } from "@/data/portfolio";
 
 export default function Contact() {
-  const [ref, controls] = useScrollAnimation();
+  const ref = useGsapFadeUp<HTMLDivElement>();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+  const [focused, setFocused] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -27,139 +22,147 @@ export default function Contact() {
     window.location.href = mailtoLink;
   };
 
-  const inputClasses =
-    "w-full bg-[var(--surface)] border border-[var(--border-clr)] rounded-xl px-5 py-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all duration-300 text-base leading-7";
-
   return (
-    <section id="contact" className="section-padding">
+    <section id="contact" className="section-padding section-border">
       <div className="container-custom">
         <SectionHeading
-          title="Get in Touch"
-          subtitle="Have a project in mind? Let's work together"
+          number="05"
+          title="Contact"
+          subtitle="Have a project in mind? Let's talk"
         />
 
-        <motion.div
+        <div
           ref={ref}
-          initial="hidden"
-          animate={controls}
-          variants={staggerContainer}
-          className="grid md:grid-cols-2 gap-16 lg:gap-20 max-w-5xl mx-auto items-center"
+          className="grid md:grid-cols-5 gap-12 lg:gap-16 items-start"
         >
-          {/* Form */}
-          <motion.div variants={fadeUp}>
-            <GlassCard hover={false} className="p-9 md:p-12">
-              <form onSubmit={handleSubmit} className="space-y-8 md:space-y-9">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-3 leading-6">
+          {/* Form — takes 3 cols */}
+          <div data-animate className="md:col-span-3">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 md:p-12">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-10">
+                {/* Name field */}
+                <div className="relative">
+                  <label
+                    className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                      focused === "name" || formData.name
+                        ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
+                        : "top-4.5 text-sm text-[var(--muted)]"
+                    }`}
+                  >
                     Name
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Your name"
-                    className={inputClasses}
+                    className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
                     value={formData.name}
+                    onFocus={() => setFocused("name")}
+                    onBlur={() => setFocused(null)}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-3 leading-6">
+
+                {/* Email field */}
+                <div className="relative">
+                  <label
+                    className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                      focused === "email" || formData.email
+                        ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
+                        : "top-4.5 text-sm text-[var(--muted)]"
+                    }`}
+                  >
                     Email
                   </label>
                   <input
                     type="email"
                     required
-                    placeholder="your@email.com"
-                    className={inputClasses}
+                    className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
                     value={formData.email}
+                    onFocus={() => setFocused("email")}
+                    onBlur={() => setFocused(null)}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--muted)] mb-3 leading-6">
+
+                {/* Message field */}
+                <div className="relative">
+                  <label
+                    className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                      focused === "message" || formData.message
+                        ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
+                        : "top-4.5 text-sm text-[var(--muted)]"
+                    }`}
+                  >
                     Message
                   </label>
                   <textarea
                     required
                     rows={5}
-                    placeholder="Tell me about your project..."
-                    className={`${inputClasses} resize-none min-h-[160px]`}
+                    className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200 resize-none"
                     value={formData.message}
+                    onFocus={() => setFocused("message")}
+                    onBlur={() => setFocused(null)}
                     onChange={(e) =>
                       setFormData({ ...formData, message: e.target.value })
                     }
                   />
                 </div>
-                <Button type="submit" variant="primary" className="w-full">
-                  <FiSend className="w-4 h-4" />
-                  Send Message
-                </Button>
-              </form>
-            </GlassCard>
-          </motion.div>
 
-          {/* Info */}
-          <motion.div
-            variants={fadeUp}
-            className="space-y-12 flex flex-col justify-center text-center md:text-left max-w-xl mx-auto"
-          >
-            <div className="space-y-5">
-              <h3 className="text-2xl md:text-3xl font-semibold leading-[1.2]">
+                <button
+                  type="submit"
+                  className="group inline-flex items-center gap-3 bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all duration-200 cursor-hover"
+                >
+                  <FiSend className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Info — takes 2 cols */}
+          <div data-animate className="md:col-span-2 space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-2xl md:text-3xl font-semibold text-[var(--fg)] leading-tight">
                 Let&apos;s build something{" "}
-                <span className="gradient-text">amazing</span>
+                <span className="text-[var(--accent)]">great</span>.
               </h3>
-              <p className="text-[var(--muted)] text-base md:text-lg leading-8 mt-5">
-                I&apos;m always open to discussing new projects, creative ideas,
-                or opportunities to be part of your vision. Whether it&apos;s a
-                SaaS platform, a web app, or a consultation — drop me a message!
+              <p className="text-[var(--fg-secondary)] text-sm leading-relaxed">
+                I&apos;m open to new projects, creative ideas, or opportunities.
+                Whether it&apos;s a SaaS platform, a web app, or a
+                consultation — reach out.
               </p>
             </div>
 
-            {/* Social links */}
-            <div className="space-y-5">
+            {/* Social links as cards */}
+            <div className="space-y-3">
               {[
-                {
-                  icon: FiGithub,
-                  label: "GitHub",
-                  href: socialLinks.github,
-                  value: "@ahmedelkatiri",
-                },
-                {
-                  icon: FiLinkedin,
-                  label: "LinkedIn",
-                  href: socialLinks.linkedin,
-                  value: "Ahmed Elkatiri",
-                },
-                {
-                  icon: FiMail,
-                  label: "Email",
-                  href: `mailto:${socialLinks.email}`,
-                  value: socialLinks.email,
-                },
+                { icon: FiGithub, label: "GitHub", href: socialLinks.github, value: "@ahmedelkatiri" },
+                { icon: FiLinkedin, label: "LinkedIn", href: socialLinks.linkedin, value: "Ahmed Elkatiri" },
+                { icon: FiMail, label: "Email", href: `mailto:${socialLinks.email}`, value: socialLinks.email },
               ].map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-5 p-5 glass-sm hover:glow-sm transition-all duration-300 group text-left"
+                  className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--muted)] hover:bg-[var(--surface-2)] transition-all duration-200 group cursor-hover"
                 >
-                  <social.icon className="w-6 h-6 text-[var(--primary)] group-hover:text-[var(--accent)] transition-colors" />
-                  <div>
-                    <div className="text-sm md:text-base font-medium">{social.label}</div>
-                    <div className="text-xs md:text-sm text-[var(--muted)] leading-6">
-                      {social.value}
-                    </div>
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--surface-2)] group-hover:bg-[var(--accent)] transition-colors duration-200">
+                    <social.icon className="w-4 h-4 text-[var(--fg-secondary)] group-hover:text-[var(--bg)] transition-colors duration-200" />
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[11px] uppercase tracking-wider text-[var(--muted)] mb-0.5">{social.label}</div>
+                    <div className="text-sm text-[var(--fg)] truncate">{social.value}</div>
+                  </div>
+                  <FiArrowUpRight className="w-4 h-4 text-[var(--muted)] group-hover:text-[var(--accent)] transition-colors shrink-0" />
                 </a>
               ))}
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

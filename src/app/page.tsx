@@ -1,7 +1,7 @@
 "use client";
 
 import ThemeProvider from "@/components/ThemeProvider";
-import ScrollProgress from "@/components/ui/ScrollProgress";
+import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
@@ -14,7 +14,7 @@ import Footer from "@/components/sections/Footer";
 export default function Home() {
   return (
     <ThemeProvider>
-      <ScrollProgress />
+      <CustomCursor />
       <Navbar />
       <main>
         <Hero />

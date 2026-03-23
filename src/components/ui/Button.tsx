@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { type ReactNode, type ButtonHTMLAttributes } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,40 +17,30 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl font-medium text-sm transition-all duration-300 cursor-pointer";
+    "inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-sm font-medium transition-all duration-200 cursor-hover";
 
   const variants = {
     primary:
-      "bg-[var(--primary)] text-white hover:bg-[var(--primary-light)] glow-sm hover:glow",
+      "bg-[var(--accent)] text-[var(--bg)] hover:opacity-85",
     outline:
-      "border border-[var(--border-clr)] text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)]",
+      "border border-[var(--border)] text-[var(--fg)] hover:border-[var(--fg-secondary)] hover:bg-[var(--surface)]",
     ghost:
-      "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-light)]",
+      "text-[var(--muted)] hover:text-[var(--fg)]",
   };
 
   const classes = `${base} ${variants[variant]} ${className}`;
 
   if (href) {
     return (
-      <motion.a
-        href={href}
-        className={classes}
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-      >
+      <a href={href} className={classes}>
         {children}
-      </motion.a>
+      </a>
     );
   }
 
   return (
-    <motion.button
-      className={classes}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      {...(props as Record<string, unknown>)}
-    >
+    <button className={classes} {...props}>
       {children}
-    </motion.button>
+    </button>
   );
 }

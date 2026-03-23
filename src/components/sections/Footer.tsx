@@ -3,19 +3,18 @@
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { socialLinks } from "@/data/portfolio";
 
-const CURRENT_YEAR = new Date().getFullYear();
-
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="border-t border-[var(--border-clr)] py-12 md:py-16 px-8 md:px-10 lg:px-12">
-      <div className="container-custom flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-sm text-[var(--muted)]">
-          &copy; {CURRENT_YEAR}{" "}
-          <span className="gradient-text font-medium">Ahmed Elkatiri</span>.
-          All rights reserved.
+    <footer className="border-t border-[var(--border)] py-10 md:py-14">
+      <div className="container-custom flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="text-xs text-[var(--muted)]">
+          &copy; {currentYear}{" "}
+          <span className="text-[var(--fg)] font-medium">Ahmed Elkatiri</span>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           {[
             { icon: FiGithub, href: socialLinks.github },
             { icon: FiLinkedin, href: socialLinks.linkedin },
@@ -26,9 +25,9 @@ export default function Footer() {
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+              className="p-2 text-[var(--muted)] hover:text-[var(--accent)] transition-colors cursor-hover"
             >
-              <s.icon className="w-5 h-5" />
+              <s.icon className="w-4 h-4" />
             </a>
           ))}
         </div>

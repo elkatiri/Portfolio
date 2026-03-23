@@ -1,197 +1,124 @@
 @use "tailwindcss";
 
-/* ── Custom Theme ── */
+/* ── Tailwind Theme Bridge ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-primary: var(--accent);
+  --color-primary-light: var(--accent-soft);
   --color-accent: var(--accent);
   --color-surface: var(--surface);
-  --color-surface-light: var(--surface-light);
-  --color-border: var(--border-clr);
+  --color-surface-light: var(--surface-2);
+  --color-border: var(--border);
   --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* ── Variables ── */
+/* ── Design Tokens ── */
 :root {
-  --background: #0a0a0f;
-  --foreground: #e4e4e7;
-  --primary: #6d5eff;
-  --primary-light: #8b7fff;
-  --accent: #00d4aa;
-  --surface: #13131a;
-  --surface-light: #1c1c27;
-  --border-clr: #2a2a3a;
-  --muted: #71717a;
-  --glass-bg: rgba(19, 19, 26, 0.6);
-  --glass-border: rgba(109, 94, 255, 0.15);
-  --gradient-primary: linear-gradient(135deg, #6d5eff 0%, #00d4aa 100%);
-  --gradient-hero: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(109, 94, 255, 0.15) 0%,
-    transparent 60%
-  );
+  --bg: #060606;
+  --fg: #ededed;
+  --fg-secondary: #a0a0a0;
+  --accent: #c4f82a;
+  --accent-soft: rgba(196, 248, 42, 0.15);
+  --surface: #0e0e0e;
+  --surface-2: #161616;
+  --border: rgba(255, 255, 255, 0.07);
+  --muted: #555;
+  --radius: 12px;
 }
 
 [data-theme="light"] {
-  --background: #f8f8fc;
-  --foreground: #18181b;
-  --surface: #ffffff;
-  --surface-light: #f0f0f5;
-  --border-clr: #d4d4d8;
-  --muted: #71717a;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(109, 94, 255, 0.2);
-  --gradient-hero: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(109, 94, 255, 0.08) 0%,
-    transparent 60%
-  );
+  --bg: #f7f7f7;
+  --fg: #0a0a0a;
+  --fg-secondary: #555;
+  --accent: #1a1a1a;
+  --accent-soft: rgba(0, 0, 0, 0.06);
+  --surface: #fff;
+  --surface-2: #f0f0f0;
+  --border: rgba(0, 0, 0, 0.08);
+  --muted: #888;
 }
 
-/* ── Base ── */
-* {
+/* ── Reset & Base ── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
   overflow-x: hidden;
+  line-height: 1.55;
+  cursor: none;
+}
+
+a,
+button,
+[role="button"] {
+  cursor: none;
 }
 
 ::selection {
-  background: rgba(109, 94, 255, 0.3);
-  color: #fff;
+  background: var(--accent);
+  color: var(--bg);
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 3px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
-/* ── Glass Utilities ── */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-}
-
-.glass-sm {
-  background: var(--glass-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-}
-
-/* ── Gradient Text ── */
-.gradient-text {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* ── Glow Effects ── */
-.glow {
-  box-shadow: 0 0 30px rgba(109, 94, 255, 0.3), 0 0 80px rgba(109, 94, 255, 0.1);
-}
-
-.glow-sm {
-  box-shadow: 0 0 15px rgba(109, 94, 255, 0.2), 0 0 40px rgba(109, 94, 255, 0.05);
-}
-
-/* ── Section Spacing ── */
+/* ── Layout ── */
 .section-padding {
-  padding: 7rem 2rem;
-
+  padding: 6rem 1.5rem;
   @media (min-width: 768px) {
-    padding: 10rem 3rem;
+    padding: 8rem 2rem;
   }
-
-  @media (min-width: 1024px) {
-    padding: 12rem 4rem;
+  @media (min-width: 1280px) {
+    padding: 10rem 0;
   }
 }
 
 .container-custom {
-  max-width: 1320px;
+  max-width: 1100px;
   margin: 0 auto;
   width: 100%;
-  padding-inline: 1rem;
-
-  @media (min-width: 768px) {
-    padding-inline: 1.5rem;
-  }
+  padding-inline: 1.25rem;
 }
 
-/* ── Animated gradient orb ── */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(5deg);
-  }
+/* ── Section Divider ── */
+.section-border {
+  border-top: 1px solid var(--border);
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
+/* ── Mono Label ── */
+.mono-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease-in-out infinite;
-}
-
-/* ── 3D Perspective Container ── */
-.perspective {
-  perspective: 1000px;
+/* ── Custom Cursor Classes ── */
+.cursor-hover {
+  /* marker for custom cursor expansion */
 }
