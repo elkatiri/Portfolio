@@ -27,6 +27,7 @@ import {
   HiOutlineCheckCircle,
 } from "react-icons/hi";
 import { type IconType } from "react-icons";
+import { desc } from "framer-motion/client";
 
 export const navLinks = [
   { label: "Home", href: "#hero" },
@@ -93,37 +94,51 @@ export const projects = [
     description:
       "A full-featured marketplace platform with real-time messaging, image uploads via Cloudinary, and a responsive storefront built on the MERN stack.",
     tech: ["React", "Node.js", "Express", "MongoDB", "Socket.io", "Cloudinary"],
-    image: "/projects/marketplace.webp",
-    demo: "#",
-    github: "#",
+    image: "/projects/markete-place.png",
+    demo: "https://markete-place.vercel.app",
+    github: "https://github.com/elkatiri/markete-place",
   },
   {
     title: "Farmers Platform",
     description:
       "An agricultural management platform with an admin dashboard, data analytics, CSV/PDF export, and role-based access control.",
-    tech: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
-    image: "/projects/farmers.webp",
-    demo: "#",
-    github: "#",
+    tech: ["React", "Node.js", "Express", "MongoDB"],
+    image: "/projects/farmers.png",
+    demo: "https://farmers-platform-beige.vercel.app",
+    github: "https://github.com/elkatiri/FarmersPlatform",
   },
   {
     title: "Dental Website",
     description:
       "A modern, responsive dental clinic website featuring appointment booking, service showcases, and clean medical UI design.",
-    tech: ["React", "Tailwind CSS", "Framer Motion"],
-    image: "/projects/dental.webp",
-    demo: "#",
-    github: "#",
+    tech: ["Next.js", "Tailwind CSS", "Framer Motion"],
+    image: "/projects/dental.png",
+    demo: "https://smilecare-dental-center.vercel.app",
+    github: "https://github.com/elkatiri/dental-website",
   },
   {
-    title: "SaaS Dashboard",
+    title: "Startup",
     description:
-      "A subscription-based SaaS application with authentication, Stripe billing integration, user dashboard, and admin analytics.",
-    tech: ["Next.js", "Node.js", "MongoDB", "Stripe", "Tailwind CSS"],
-    image: "/projects/saas.webp",
-    demo: "#",
-    github: "#",
+      "A sleek landing page for a tech startup, built with Next.js and Tailwind CSS, featuring smooth animations and a responsive design.",
+    tech: ["Next.js","Tailwind CSS"],
+    image: "/projects/startup.png",
+    demo: "https://startup-roan-ten.vercel.app",
+    github: "https://github.com/elkatiri/Startup",
   },
+  {
+    title:"Ecoommerce Store",
+    description:"a store built with wordpress and woocommerce, with custom theme development and plugin integrations.",
+    tech:["WordPress", "WooCommerce"],
+    image:"/projects/ecommerce.png",
+    demo:"https://italiecasa.com",
+  },
+  {
+    title:"Economic Travel Morocco",
+    description:"a travel agency website built with wordpress, featuring custom booking forms and interactive maps.",
+    tech:["WordPress", "WP Travel Engine"],
+    image:"/projects/travel.png",
+    demo:"https://economictravelmorocco.com",
+  }
 ];
 
 export const workflowSteps: {

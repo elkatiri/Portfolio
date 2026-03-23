@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, type FormEvent } from "react";
-import { FiSend, FiGithub, FiLinkedin, FiMail, FiArrowUpRight } from "react-icons/fi";
+import { FiSend, FiGithub, FiLinkedin, FiMail, FiArrowUpRight, FiCheck } from "react-icons/fi";
 import { useGsapFadeUp } from "@/hooks/useGsap";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { socialLinks } from "@/data/portfolio";
@@ -14,12 +14,29 @@ export default function Contact() {
     message: "",
   });
   const [focused, setFocused] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:${socialLinks.email}?subject=Portfolio Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(formData.message)}`;
-    window.location.href = mailtoLink;
+    setStatus("sending");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error();
+
+      setStatus("sent");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -111,12 +128,24 @@ export default function Contact() {
                   />
                 </div>
 
+                {status === "sent" && (
+                  <p className="text-green-500 text-sm flex items-center gap-2">
+                    <FiCheck className="w-4 h-4" /> Message sent successfully!
+                  </p>
+                )}
+                {status === "error" && (
+                  <p className="text-red-500 text-sm">
+                    Failed to send. Please try again.
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="group inline-flex items-center gap-3 bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all duration-200 cursor-hover"
+                  disabled={status === "sending"}
+                  className="group inline-flex items-center gap-3 bg-[var(--accent)] text-[var(--bg)] px-8 py-3.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all duration-200 cursor-hover disabled:opacity-60"
                 >
                   <FiSend className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  Send Message
+                  {status === "sending" ? "Sending..." : "Send Message"}
                 </button>
               </form>
             </div>
