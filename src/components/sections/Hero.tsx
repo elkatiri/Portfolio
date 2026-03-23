@@ -22,7 +22,8 @@ function SphereBackground() {
     if (!ctx) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let w: number, h: number;
+    let w = window.innerWidth;
+    let h = window.innerHeight;
 
     const resize = () => {
       w = window.innerWidth;
