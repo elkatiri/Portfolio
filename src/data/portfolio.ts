@@ -183,4 +183,5 @@ export const socialLinks = {
   github: "https://github.com/elkatiri",
   linkedin: "https://www.linkedin.com/in/ahmed-elkatiri-a0347b3b2/",
   email: "ahmedelkatiri2026@gmail.com",
+  whatsapp: "212651625941",
 };

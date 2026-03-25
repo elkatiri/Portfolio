@@ -4,14 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { BsSun, BsMoon } from "react-icons/bs";
+import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import { navLinks } from "@/data/portfolio";
 import { useTheme } from "@/components/ThemeProvider";
+import { triggerCvCelebration } from "@/lib/cvCelebration";
 import gsap from "gsap";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const navRef = useRef<HTMLElement>(null);
 
@@ -22,7 +23,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setMounted(true);
     if (navRef.current) {
       gsap.fromTo(navRef.current, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.1 });
     }
@@ -55,12 +55,21 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
+          <a
+            href="/Ahmed-Elkatiri-CV.pdf"
+            download
+            onClick={triggerCvCelebration}
+            className="group inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--accent)_24%,var(--border))] bg-[color:color-mix(in_srgb,var(--surface)_84%,transparent)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--fg)] shadow-[0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:bg-[color:color-mix(in_srgb,var(--surface-2)_92%,transparent)] hover:text-[var(--accent)] hover:shadow-[0_14px_30px_rgba(0,0,0,0.22)] cursor-hover"
+          >
+            <HiOutlineArrowDownTray className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-y-0.5" />
+            <span>CV</span>
+          </a>
           <button
             onClick={toggleTheme}
             className="p-2 rounded-full hover:bg-[var(--surface-2)] transition-colors cursor-hover"
             aria-label="Toggle theme"
           >
-            {!mounted || theme === "dark" ? (
+            {theme === "dark" ? (
               <BsSun className="w-3.5 h-3.5 text-[var(--muted)]" />
             ) : (
               <BsMoon className="w-3.5 h-3.5 text-[var(--muted)]" />
@@ -71,7 +80,7 @@ export default function Navbar() {
         {/* Mobile */}
         <div className="flex items-center gap-3 md:hidden">
           <button onClick={toggleTheme} className="p-2 cursor-pointer" aria-label="Toggle theme">
-            {!mounted || theme === "dark" ? <BsSun className="w-4 h-4 text-[var(--muted)]" /> : <BsMoon className="w-4 h-4 text-[var(--muted)]" />}
+            {theme === "dark" ? <BsSun className="w-4 h-4 text-[var(--muted)]" /> : <BsMoon className="w-4 h-4 text-[var(--muted)]" />}
           </button>
           <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 cursor-pointer" aria-label="Toggle menu">
             {mobileOpen ? <HiX className="w-5 h-5" /> : <HiMenuAlt3 className="w-5 h-5" />}
@@ -98,6 +107,18 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
+              <a
+                href="/Ahmed-Elkatiri-CV.pdf"
+                download
+                onClick={(event) => {
+                  triggerCvCelebration(event);
+                  setMobileOpen(false);
+                }}
+                className="mt-2 inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--accent)_24%,var(--border))] bg-[color:color-mix(in_srgb,var(--surface)_86%,transparent)] px-4 py-3 text-sm font-semibold tracking-[0.04em] text-[var(--fg)] transition-all duration-300 hover:border-[var(--accent)] hover:bg-[var(--surface)]"
+              >
+                <HiOutlineArrowDownTray className="h-4 w-4" />
+                <span>Download CV</span>
+              </a>
             </div>
           </motion.div>
         )}

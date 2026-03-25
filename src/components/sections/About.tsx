@@ -1,6 +1,8 @@
 "use client";
 
 import { useGsapFadeUp } from "@/hooks/useGsap";
+import { HiOutlineArrowDownTray } from "react-icons/hi2";
+import Button from "@/components/ui/Button";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 export default function About() {
@@ -33,6 +35,27 @@ export default function About() {
             <strong className="text-[var(--fg)]">Jira</strong> and <strong className="text-[var(--fg)]">Slack</strong> for
             team collaboration.
           </p>
+
+          <div
+            data-animate
+            className="flex flex-col gap-5 rounded-[calc(var(--radius)+6px)] border border-[var(--border)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface)_92%,transparent),color-mix(in_srgb,var(--surface-2)_88%,transparent))] p-6 md:flex-row md:items-center md:justify-between"
+          >
+            <div className="max-w-xl">
+              <p className="mono-label mb-2">Resume</p>
+              <p className="text-base md:text-lg text-[var(--fg)] leading-relaxed">
+                Want the concise version of my experience, stack, and project work? Download my CV here.
+              </p>
+            </div>
+            <Button
+              href="/Ahmed-Elkatiri-CV.pdf"
+              variant="download"
+              download
+              className="w-full justify-center md:w-auto md:min-w-[12rem]"
+            >
+              <HiOutlineArrowDownTray className="text-base transition-transform duration-300 group-hover:translate-y-0.5" />
+              <span>Download CV</span>
+            </Button>
+          </div>
 
           {/* Stats */}
           <div data-animate className="flex gap-12 pt-6 border-t border-[var(--border)]">

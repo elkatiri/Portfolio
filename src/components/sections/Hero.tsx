@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
+import { HiOutlineArrowDownTray } from "react-icons/hi2";
 import Button from "@/components/ui/Button";
 
 /* ─── 3D Morphing Sphere Background ─── */
@@ -117,9 +118,9 @@ function SphereBackground() {
         const morph = 1 + Math.sin(time * v.speed + v.noiseOffset) * 0.12
                         + Math.sin(time * 0.7 + v.phi * 3) * 0.06;
         const r = radius * morph;
-        let x = Math.sin(v.phi) * Math.cos(v.theta) * r;
-        let y = Math.cos(v.phi) * r;
-        let z = Math.sin(v.phi) * Math.sin(v.theta) * r;
+        const x = Math.sin(v.phi) * Math.cos(v.theta) * r;
+        const y = Math.cos(v.phi) * r;
+        const z = Math.sin(v.phi) * Math.sin(v.theta) * r;
 
         const x2 = x * cosRY - z * sinRY;
         const z2 = x * sinRY + z * cosRY;
@@ -348,6 +349,15 @@ export default function Hero() {
 
         <div ref={ctaRef} className="flex flex-wrap gap-4" style={{ opacity: 0 }}>
           <Button href="#projects" variant="primary">View Work</Button>
+          <Button
+            href="/Ahmed-Elkatiri-CV.pdf"
+            variant="download"
+            download
+            className="min-w-[11.5rem]"
+          >
+            <HiOutlineArrowDownTray className="text-base transition-transform duration-300 group-hover:translate-y-0.5" />
+            <span>Download CV</span>
+          </Button>
           <Button href="#contact" variant="outline">Get in Touch</Button>
         </div>
 
