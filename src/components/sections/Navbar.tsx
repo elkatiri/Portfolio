@@ -56,7 +56,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/Ahmed-Elkatiri-CV.pdf"
+            href="/AhmedElkatiri_CV.pdf"
             download
             onClick={triggerCvCelebration}
             className="group inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--accent)_24%,var(--border))] bg-[color:color-mix(in_srgb,var(--surface)_84%,transparent)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--fg)] shadow-[0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:bg-[color:color-mix(in_srgb,var(--surface-2)_92%,transparent)] hover:text-[var(--accent)] hover:shadow-[0_14px_30px_rgba(0,0,0,0.22)] cursor-hover"
@@ -108,7 +108,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="/Ahmed-Elkatiri-CV.pdf"
+                href="/AhmedElkatiri_CV.pdf"
                 download
                 onClick={(event) => {
                   triggerCvCelebration(event);

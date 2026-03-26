@@ -47,7 +47,7 @@ export default function About() {
               </p>
             </div>
             <Button
-              href="/Ahmed-Elkatiri-CV.pdf"
+              href="/AhmedElkatiri_CV.pdf"
               variant="download"
               download
               className="w-full justify-center md:w-auto md:min-w-[12rem]"
