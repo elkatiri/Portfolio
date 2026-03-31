@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, type FormEvent } from "react";
+import { triggerContactCelebration } from "@/lib/contactCelebration";
 import { FiSend, FiGithub, FiLinkedin, FiMail, FiArrowUpRight, FiCheck } from "react-icons/fi";
 import { useGsapFadeUp } from "@/hooks/useGsap";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -32,6 +33,8 @@ export default function Contact() {
 
       setStatus("sent");
       setFormData({ name: "", email: "", message: "" });
+      // Trigger celebration animation (center of screen)
+      triggerContactCelebration();
       setTimeout(() => setStatus("idle"), 4000);
     } catch {
       setStatus("error");

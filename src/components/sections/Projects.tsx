@@ -22,32 +22,20 @@ export default function Projects() {
     const cards = el.querySelectorAll<HTMLElement>("[data-project-card]");
 
     const ctx = gsap.context(() => {
-      cards.forEach((card, i) => {
-        const isEven = i % 2 === 0;
+      cards.forEach((card) => {
         const imageEl = card.querySelector("[data-project-image]");
         const contentEls = card.querySelectorAll("[data-project-content] > *");
 
-        // 3D card entrance — flies in from the side with rotation
+        // Premium fade+scale entrance for card
         gsap.set(card, {
           opacity: 0,
-          rotateY: isEven ? -25 : 25,
-          rotateX: 8,
-          x: isEven ? -120 : 120,
-          z: -200,
-          scale: 0.9,
-          transformPerspective: 1200,
-          transformOrigin: isEven ? "left center" : "right center",
+          y: 40,
         });
-
         gsap.to(card, {
           opacity: 1,
-          rotateY: 0,
-          rotateX: 0,
-          x: 0,
-          z: 0,
-          scale: 1,
-          duration: 1.2,
-          ease: "power3.out",
+          y: 0,
+          duration: 1.1,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: card,
             start: "top 85%",
@@ -56,29 +44,41 @@ export default function Projects() {
           },
         });
 
-        // Image parallax tilt on scroll
+        // Premium image effect: subtle scale+parallax on scroll
         if (imageEl) {
+          gsap.set(imageEl, { scale: 1.04, opacity: 0, y: 30 });
           gsap.to(imageEl, {
-            rotateY: isEven ? 6 : -6,
-            rotateX: -3,
-            scale: 1.04,
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              end: "top 40%",
+              toggleActions: "play none none none",
+            },
+          });
+          // Parallax on scroll
+          gsap.to(imageEl, {
+            yPercent: 8,
             ease: "none",
             scrollTrigger: {
               trigger: card,
               start: "top bottom",
               end: "bottom top",
-              scrub: 1.5,
+              scrub: 1.2,
             },
           });
         }
 
-        // Staggered content reveal
+        // Staggered content reveal (keep)
         if (contentEls.length) {
-          gsap.set(contentEls, { opacity: 0, y: 30, rotateX: 15 });
+          gsap.set(contentEls, { opacity: 0, y: 30 });
           gsap.to(contentEls, {
             opacity: 1,
             y: 0,
-            rotateX: 0,
             duration: 0.7,
             stagger: 0.1,
             ease: "power2.out",

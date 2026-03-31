@@ -40,7 +40,6 @@ function SphereBackground() {
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Fibonacci sphere distribution
     const POINTS = 140;
     const BASE_RADIUS = Math.min(w, h) * 0.32;
     const goldenAngle = Math.PI * (3 - Math.sqrt(5));
@@ -56,7 +55,6 @@ function SphereBackground() {
       });
     }
 
-    // Connect nearby vertices
     const edges: [number, number][] = [];
     for (let i = 0; i < POINTS; i++) {
       for (let j = i + 1; j < POINTS; j++) {
@@ -72,7 +70,6 @@ function SphereBackground() {
       }
     }
 
-    // Floating particles
     const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number; life: number }[] = [];
     for (let i = 0; i < 50; i++) {
       particles.push({
@@ -85,16 +82,13 @@ function SphereBackground() {
 
     let time = 0;
 
-    // Detect light/dark theme for sphere color
     const getColor = () => {
       const isLight = document.documentElement.getAttribute("data-theme") === "light";
       return isLight
-        ? { r: 20, g: 20, b: 20, glow: "rgba(0,0,0," }   // dark sphere on light bg
-        : { r: 196, g: 248, b: 42, glow: "rgba(196,248,42," }; // lime on dark bg
+        ? { r: 20, g: 20, b: 20, glow: "rgba(0,0,0," }
+        : { r: 196, g: 248, b: 42, glow: "rgba(196,248,42," };
     };
     let clr = getColor();
-
-    // Re-check theme periodically
     const themeInterval = setInterval(() => { clr = getColor(); }, 500);
 
     function draw() {
@@ -113,7 +107,6 @@ function SphereBackground() {
       const radius = BASE_RADIUS + Math.sin(time * 0.8) * 8;
       const cx = w * 0.5, cy = h * 0.48;
 
-      // Project vertices with morphing
       const projected: { x: number; y: number; z: number; size: number }[] = [];
       for (const v of vertices) {
         const morph = 1 + Math.sin(time * v.speed + v.noiseOffset) * 0.12
@@ -132,7 +125,6 @@ function SphereBackground() {
         projected.push({ x: cx + x2 * perspective, y: cy + y2 * perspective, z: z3, size: perspective });
       }
 
-      // Draw edges
       for (const [a, b] of edges) {
         const p1 = projected[a], p2 = projected[b];
         const avgZ = (p1.z + p2.z) / 2;
@@ -145,7 +137,6 @@ function SphereBackground() {
         ctx.stroke();
       }
 
-      // Draw vertices
       for (const p of projected) {
         const depth = (p.z + radius) / (radius * 2);
         const alpha = 0.08 + depth * 0.35;
@@ -156,7 +147,6 @@ function SphereBackground() {
         ctx.fill();
       }
 
-      // Inner glow
       const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.1);
       glow.addColorStop(0, c.glow + "0.025)");
       glow.addColorStop(0.5, c.glow + "0.01)");
@@ -164,7 +154,6 @@ function SphereBackground() {
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
 
-      // Floating particles
       for (const p of particles) {
         p.life += 0.008;
         p.x += p.vx; p.y += p.vy;
@@ -177,7 +166,6 @@ function SphereBackground() {
         ctx.fill();
       }
 
-      // Mouse glow
       const mg = ctx.createRadialGradient(m.x * w, m.y * h, 0, m.x * w, m.y * h, 280);
       mg.addColorStop(0, c.glow + "0.035)");
       mg.addColorStop(1, c.glow + "0)");
@@ -212,12 +200,19 @@ export default function Hero() {
   const accentLineRef = useRef<HTMLSpanElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const imageCardRef = useRef<HTMLDivElement>(null);
-  const imageGlowRef = useRef<HTMLDivElement>(null);
-  const imageShineRef = useRef<HTMLDivElement>(null);
-  const imageInnerRef = useRef<HTMLDivElement>(null);
-  const imageBorderRef = useRef<HTMLDivElement>(null);
+
+  // ── Image refs (redesigned system) ──
+  const imageWrapperRef = useRef<HTMLDivElement>(null);    // outer positioning shell
+  const imageRigRef = useRef<HTMLDivElement>(null);        // 3D tilt rig
+  const imageMaskRef = useRef<HTMLDivElement>(null);       // clip-path reveal mask
+  const imageCardRef = useRef<HTMLDivElement>(null);       // glass card
+  const imageInnerRef = useRef<HTMLDivElement>(null);      // photo layer
+  const imageGlowRef = useRef<HTMLDivElement>(null);       // ambient glow blob
+  const imageGlow2Ref = useRef<HTMLDivElement>(null);      // secondary glow
+  const imageAuroraRef = useRef<HTMLDivElement>(null);     // rotating aurora border
+  const imageScanRef = useRef<HTMLDivElement>(null);       // scanline sweep
+  const imageOverlayRef = useRef<HTMLDivElement>(null);    // glass overlay
+
   const dividerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -229,209 +224,331 @@ export default function Hero() {
     // ── 1. Background cinematic scale ──
     tl.fromTo(bgRef.current, { opacity: 0, scale: 1.15 }, { opacity: 1, scale: 1, duration: 2.4, ease: "expo.out" }, 0);
 
-    // ── 2. Tag slides in with subtle line animation ──
+    // ── 2. Tag ──
     tl.fromTo(tagRef.current,
       { opacity: 0, x: -30, filter: "blur(6px)" },
-      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" },
-      0.25
+      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }, 0.25
     );
 
-    // ── 3. Name chars — spring cascade ──
+    // ── 3. Name chars ──
     if (nameRef.current) {
       const chars = nameRef.current.querySelectorAll(".char");
       tl.fromTo(chars,
         { opacity: 0, y: 60, rotateX: -90, scale: 0.5, transformPerspective: 600 },
-        { opacity: 1, y: 0, rotateX: 0, scale: 1, duration: 0.7, stagger: 0.025, ease: "back.out(2.2)" },
-        0.4
+        { opacity: 1, y: 0, rotateX: 0, scale: 1, duration: 0.7, stagger: 0.025, ease: "back.out(2.2)" }, 0.4
       );
     }
 
-    // ── 4. Headline — cinematic word reveals ──
+    // ── 4. Headline words ──
     tl.fromTo(word1Ref.current,
       { opacity: 0, y: "140%", rotateX: 60, transformPerspective: 1000, scale: 0.75 },
-      { opacity: 1, y: "0%", rotateX: 0, scale: 1, duration: 1.4, ease: "expo.out" },
-      0.55
+      { opacity: 1, y: "0%", rotateX: 0, scale: 1, duration: 1.4, ease: "expo.out" }, 0.55
     );
     tl.fromTo(word2Ref.current,
       { opacity: 0, y: "140%", rotateX: 60, transformPerspective: 1000, scale: 0.75 },
-      { opacity: 1, y: "0%", rotateX: 0, scale: 1, duration: 1.4, ease: "expo.out" },
-      0.72
+      { opacity: 1, y: "0%", rotateX: 0, scale: 1, duration: 1.4, ease: "expo.out" }, 0.72
     );
     tl.fromTo(word3Ref.current,
       { opacity: 0, x: -50, rotateY: -40, scale: 0.8, transformPerspective: 1000, filter: "blur(6px)" },
-      { opacity: 1, x: 0, rotateY: 0, scale: 1, filter: "blur(0px)", duration: 1.1, ease: "power3.out" },
-      0.9
+      { opacity: 1, x: 0, rotateY: 0, scale: 1, filter: "blur(0px)", duration: 1.1, ease: "power3.out" }, 0.9
     );
-
-    // ── 5. Accent underline — elastic draw ──
     tl.fromTo(accentLineRef.current,
       { scaleX: 0, opacity: 0 },
-      { scaleX: 1, opacity: 1, duration: 1.1, ease: "elastic.out(1, 0.5)" },
-      1.35
+      { scaleX: 1, opacity: 1, duration: 1.1, ease: "elastic.out(1, 0.5)" }, 1.35
     );
 
-    // ── 6. Subtitle — smooth deblur ──
+    // ── 5. Subtitle ──
     tl.fromTo(subRef.current,
       { opacity: 0, y: 30, filter: "blur(8px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" },
-      1.4
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }, 1.4
     );
 
-    // ── 7. CTA buttons — elastic stagger ──
+    // ── 6. CTA ──
     if (ctaRef.current) {
       const btns = ctaRef.current.children;
       tl.fromTo(btns,
         { opacity: 0, y: 30, scale: 0.85, rotateX: 20, transformPerspective: 500 },
-        {
-          opacity: 1, y: 0, scale: 1, rotateX: 0,
-          duration: 0.8, stagger: 0.12, ease: "back.out(1.8)",
-        },
-        1.55
+        { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 0.8, stagger: 0.12, ease: "back.out(1.8)" }, 1.55
       );
     }
 
-    // ── 8. Image card — dramatic 3D entrance ──
-    tl.fromTo(imageRef.current,
-      { opacity: 0, scale: 0.82, filter: "blur(14px)" },
-      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.3, ease: "expo.out" },
-      0.65
+    // ════════════════════════════════════════════════════
+    // ── IMAGE: Premium Multi-Stage Cinematic Entrance ──
+    // ════════════════════════════════════════════════════
+    const IMAGE_START = 0.5;
+
+    // Stage 1: Wrapper drifts in from right with depth blur
+    tl.fromTo(imageWrapperRef.current,
+      { opacity: 0, x: 80, filter: "blur(20px)" },
+      { opacity: 1, x: 0, filter: "blur(0px)", duration: 1.6, ease: "expo.out" },
+      IMAGE_START
     );
+
+    // Stage 2: Rig starts heavily rotated and snaps to rest
+    tl.fromTo(imageRigRef.current,
+      { rotateY: 55, rotateX: -18, rotateZ: 8, scale: 0.72, transformPerspective: 1400 },
+      { rotateY: -5, rotateX: 3, rotateZ: 0, scale: 1, duration: 2.0, ease: "expo.out" },
+      IMAGE_START + 0.08
+    );
+
+    // Stage 3: Clip-path mask wipe — frame slides up to reveal photo
+    tl.fromTo(imageMaskRef.current,
+      { clipPath: "inset(100% 0% 0% 0% round 2rem)" },
+      { clipPath: "inset(0% 0% 0% 0% round 2rem)", duration: 1.4, ease: "expo.inOut" },
+      IMAGE_START + 0.35
+    );
+
+    // Stage 4: Card glass surface materializes
     tl.fromTo(imageCardRef.current,
-      { rotateX: 22, rotateY: -28, y: 70, scale: 0.88 },
-      { rotateX: 0, rotateY: -6, y: 0, scale: 1, duration: 1.6, ease: "expo.out" },
-      0.7
-    );
-    tl.fromTo(imageGlowRef.current,
-      { opacity: 0, scale: 0.5 },
-      { opacity: 0.6, scale: 1, duration: 1.4, ease: "power2.out" },
-      0.85
-    );
-    tl.fromTo(imageBorderRef.current,
       { opacity: 0 },
-      { opacity: 1, duration: 1, ease: "power2.out" },
-      1.2
+      { opacity: 1, duration: 0.6, ease: "power2.out" },
+      IMAGE_START + 0.4
     );
-    // Shine sweep on entrance
-    tl.fromTo(imageShineRef.current,
-      { xPercent: -160, opacity: 0 },
-      { xPercent: 160, opacity: 0.45, duration: 1.3, ease: "power2.inOut" },
-      1.3
+
+    // Stage 5: Primary glow expands outward like a bloom
+    tl.fromTo(imageGlowRef.current,
+      { opacity: 0, scale: 0.3, filter: "blur(20px)" },
+      { opacity: 0.7, scale: 1, filter: "blur(60px)", duration: 1.8, ease: "expo.out" },
+      IMAGE_START + 0.6
     );
-    tl.to(imageShineRef.current, { opacity: 0, duration: 0.3 }, 2.35);
 
-    // ── 9. Divider + scroll indicator ──
-    tl.fromTo(dividerRef.current, { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "expo.inOut" }, "-=0.6");
-    tl.fromTo(scrollRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7 }, "-=0.4");
+    // Stage 6: Secondary glow from top
+    tl.fromTo(imageGlow2Ref.current,
+      { opacity: 0, y: -40 },
+      { opacity: 0.5, y: 0, duration: 1.4, ease: "power3.out" },
+      IMAGE_START + 0.8
+    );
 
-    // ── Continuous: multi-axis floating card ──
-    if (imageCardRef.current) {
+    // Stage 7: Aurora border fades in with a rotation head-start
+    tl.fromTo(imageAuroraRef.current,
+      { opacity: 0, scale: 0.92 },
+      { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" },
+      IMAGE_START + 0.9
+    );
+
+    // Stage 8: Scanline sweep — a single dramatic horizontal pass
+    tl.fromTo(imageScanRef.current,
+      { yPercent: -100, opacity: 0 },
+      { yPercent: 100, opacity: 1, duration: 1.2, ease: "power2.inOut" },
+      IMAGE_START + 1.1
+    );
+    tl.to(imageScanRef.current, { opacity: 0, duration: 0.25 }, IMAGE_START + 2.1);
+
+    // Stage 9: Glass overlay settles
+    tl.fromTo(imageOverlayRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.8, ease: "power2.out" },
+      IMAGE_START + 1.4
+    );
+
+    // ════════════════════════════════════════════════
+    // ── CONTINUOUS: Organic Multi-Layered Float ──
+    // ════════════════════════════════════════════════
+    // Three overlapping oscillations with prime-number-like frequencies
+    // to ensure they never feel repetitive or robotic.
+    const FLOAT_DELAY = IMAGE_START + 2.2;
+
+    // Layer A — slow vertical drift
+    tweens.push(
+      gsap.to(imageRigRef.current, {
+        y: "+=18",
+        duration: 4.1,
+        repeat: -1, yoyo: true,
+        ease: "sine.inOut",
+        delay: FLOAT_DELAY,
+      })
+    );
+
+    // Layer B — subtle lateral sway with slight roll
+    tweens.push(
+      gsap.to(imageRigRef.current, {
+        x: "+=6",
+        rotateZ: "-=0.8",
+        duration: 5.7,
+        repeat: -1, yoyo: true,
+        ease: "sine.inOut",
+        delay: FLOAT_DELAY + 0.3,
+      })
+    );
+
+    // Layer C — micro-breathe in scale (depth illusion)
+    tweens.push(
+      gsap.to(imageRigRef.current, {
+        scale: 1.012,
+        duration: 3.3,
+        repeat: -1, yoyo: true,
+        ease: "sine.inOut",
+        delay: FLOAT_DELAY + 0.7,
+      })
+    );
+
+    // Glow breathe (out of phase with float for organic feel)
+    tweens.push(
+      gsap.to(imageGlowRef.current, {
+        scale: 1.25,
+        opacity: 0.4,
+        duration: 3.2,
+        repeat: -1, yoyo: true,
+        ease: "sine.inOut",
+        delay: FLOAT_DELAY,
+      })
+    );
+    tweens.push(
+      gsap.to(imageGlow2Ref.current, {
+        opacity: 0.25,
+        y: 10,
+        duration: 4.6,
+        repeat: -1, yoyo: true,
+        ease: "sine.inOut",
+        delay: FLOAT_DELAY + 1.2,
+      })
+    );
+
+    // ── Aurora border: continuous smooth conic rotation ──
+    const auroraEl = imageAuroraRef.current;
+    if (auroraEl) {
+      const anim = { angle: 0 };
       tweens.push(
-        gsap.to(imageCardRef.current, {
-          y: "+=14", rotateZ: -1.2, rotateY: "-=3",
-          duration: 3.6, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2.2,
-        }),
-        gsap.to(imageCardRef.current, {
-          rotateX: "+=2.5",
-          duration: 4.8, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2.5,
-        })
-      );
-    }
-
-    // ── Continuous: glow breathing ──
-    if (imageGlowRef.current) {
-      tweens.push(
-        gsap.to(imageGlowRef.current, {
-          scale: 1.18, opacity: 0.35,
-          duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2.2,
-        })
-      );
-    }
-
-    // ── Continuous: animated border rotation ──
-    if (imageBorderRef.current) {
-      const borderEl = imageBorderRef.current;
-      const borderAnim = { angle: 0 };
-      tweens.push(
-        gsap.to(borderAnim, {
+        gsap.to(anim, {
           angle: 360,
-          duration: 5,
+          duration: 4,
           repeat: -1,
           ease: "none",
           onUpdate: () => {
-            borderEl.style.background =
-              `conic-gradient(from ${borderAnim.angle}deg, var(--accent), transparent 40%, transparent 60%, var(--accent))`;
+            auroraEl.style.background =
+              `conic-gradient(from ${anim.angle}deg,
+                var(--accent) 0deg,
+                transparent 60deg,
+                transparent 150deg,
+                rgba(196,248,42,0.25) 210deg,
+                transparent 270deg,
+                var(--accent) 360deg)`;
           },
         })
       );
     }
 
-    // ── Continuous: periodic shine sweep ──
-    if (imageShineRef.current) {
-      tweens.push(
-        gsap.fromTo(imageShineRef.current,
-          { xPercent: -160, opacity: 0 },
-          {
-            xPercent: 160, opacity: 0.3,
-            duration: 1.5, repeat: -1, repeatDelay: 4,
-            ease: "power2.inOut", delay: 3.5,
-          }
-        )
-      );
-    }
+    // ── Periodic scanline sweep (looped, long gap) ──
+    tweens.push(
+      gsap.fromTo(imageScanRef.current,
+        { yPercent: -100, opacity: 0 },
+        {
+          yPercent: 100,
+          opacity: 0.6,
+          duration: 1.4,
+          repeat: -1,
+          repeatDelay: 5.5,
+          ease: "power2.inOut",
+          delay: IMAGE_START + 4.0,
+        }
+      )
+    );
 
-    // ── Mouse tilt with inner image counter-parallax ──
-    const imageWrapper = imageRef.current;
-    const imageCard = imageCardRef.current;
+    // ════════════════════════════════════════════════════════
+    // ── MOUSE: Magnetic Spring Tilt + Inner Parallax ──
+    // ════════════════════════════════════════════════════════
+    const imageWrapper = imageWrapperRef.current;
+    const imageRig = imageRigRef.current;
     const imageInner = imageInnerRef.current;
+    const imageGlow = imageGlowRef.current;
 
-    const handleImageMove = (event: MouseEvent) => {
-      if (!imageWrapper || !imageCard) return;
-      const bounds = imageWrapper.getBoundingClientRect();
-      const offsetX = (event.clientX - bounds.left) / bounds.width - 0.5;
-      const offsetY = (event.clientY - bounds.top) / bounds.height - 0.5;
+    // Spring physics state
+    const spring = { vx: 0, vy: 0, rx: 0, ry: 0 };
+    const STIFFNESS = 0.08;
+    const DAMPING = 0.75;
+    let targetRX = 0, targetRY = -5;
+    let rafId: number;
+    let isHovered = false;
 
-      gsap.to(imageCard, {
-        rotateY: -6 + offsetX * 18,
-        rotateX: -offsetY * 15,
-        duration: 0.5,
-        ease: "power2.out",
-        overwrite: "auto",
+    const springLoop = () => {
+      if (!imageRig) return;
+      spring.vx += (targetRY - spring.ry) * STIFFNESS;
+      spring.vy += (targetRX - spring.rx) * STIFFNESS;
+      spring.vx *= DAMPING;
+      spring.vy *= DAMPING;
+      spring.ry += spring.vx;
+      spring.rx += spring.vy;
+
+      gsap.set(imageRig, {
+        rotateY: spring.ry,
+        rotateX: spring.rx,
+        overwrite: false,
       });
 
-      // Counter-parallax on inner image
+      rafId = requestAnimationFrame(springLoop);
+    };
+    rafId = requestAnimationFrame(springLoop);
+
+    const handleImageMove = (event: MouseEvent) => {
+      if (!imageWrapper) return;
+      const bounds = imageWrapper.getBoundingClientRect();
+      const nx = (event.clientX - bounds.left) / bounds.width - 0.5;   // -0.5 → 0.5
+      const ny = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+      targetRY = -5 + nx * 26;
+      targetRX = -ny * 18;
+
+      // Inner image counter-parallax (deeper layer feels further away)
       if (imageInner) {
         gsap.to(imageInner, {
-          x: -offsetX * 16,
-          y: -offsetY * 12,
-          scale: 1.06,
-          duration: 0.5,
+          x: -nx * 22,
+          y: -ny * 16,
+          scale: 1.08,
+          duration: 0.9,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+
+      // Glow tracks cursor position reactively
+      if (imageGlow) {
+        gsap.to(imageGlow, {
+          x: nx * 30,
+          y: ny * 20,
+          duration: 1.0,
           ease: "power2.out",
           overwrite: "auto",
         });
       }
     };
 
+    const handleImageEnter = () => {
+      isHovered = true;
+      // Kill the float tweens temporarily so tilt is clean
+      gsap.to(imageRigRef.current, { scale: 1.02, duration: 0.5, ease: "power2.out", overwrite: "auto" });
+    };
+
     const handleImageLeave = () => {
-      if (imageCard) {
-        gsap.to(imageCard, {
-          rotateX: 0, rotateY: -6,
-          duration: 0.8, ease: "elastic.out(1, 0.4)", overwrite: "auto",
-        });
-      }
+      isHovered = false;
+      targetRX = 3;
+      targetRY = -5;
+
       if (imageInner) {
         gsap.to(imageInner, {
           x: 0, y: 0, scale: 1,
-          duration: 0.8, ease: "elastic.out(1, 0.4)", overwrite: "auto",
+          duration: 1.2, ease: "elastic.out(1, 0.45)", overwrite: "auto",
         });
       }
+      if (imageGlow) {
+        gsap.to(imageGlow, {
+          x: 0, y: 0,
+          duration: 1.2, ease: "elastic.out(1, 0.45)", overwrite: "auto",
+        });
+      }
+      gsap.to(imageRigRef.current, { scale: 1, duration: 1.2, ease: "elastic.out(1, 0.4)", overwrite: "auto" });
     };
 
     if (imageWrapper) {
       imageWrapper.addEventListener("mousemove", handleImageMove);
+      imageWrapper.addEventListener("mouseenter", handleImageEnter);
       imageWrapper.addEventListener("mouseleave", handleImageLeave);
     }
 
-    // ── Scroll parallax with split speeds ──
+    // ── Divider + scroll indicator ──
+    tl.fromTo(dividerRef.current, { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "expo.inOut" }, "-=0.6");
+    tl.fromTo(scrollRef.current, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7 }, "-=0.4");
+
+    // ── Scroll parallax ──
     const section = sectionRef.current;
     if (section) {
       onScroll = () => {
@@ -442,9 +559,8 @@ export default function Hero() {
           content.style.transform = `translate3d(0, ${y * 0.18}px, 0)`;
           content.style.opacity = String(1 - f * 0.75);
         }
-        // Image floats up faster on scroll for depth
         if (imageWrapper) {
-          imageWrapper.style.transform = `translate3d(0, ${y * -0.06}px, 0)`;
+          imageWrapper.style.transform = `translate3d(0, ${y * -0.07}px, 0)`;
         }
       };
       window.addEventListener("scroll", onScroll, { passive: true });
@@ -453,17 +569,16 @@ export default function Hero() {
     return () => {
       tl.kill();
       tweens.forEach((t) => t.kill());
+      cancelAnimationFrame(rafId);
       if (imageWrapper) {
         imageWrapper.removeEventListener("mousemove", handleImageMove);
+        imageWrapper.removeEventListener("mouseenter", handleImageEnter);
         imageWrapper.removeEventListener("mouseleave", handleImageLeave);
       }
-      if (onScroll) {
-        window.removeEventListener("scroll", onScroll);
-      }
+      if (onScroll) window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
-  // Split name into individual chars for stagger
   const name = "Ahmed Elkatiri";
   const nameChars = name.split("").map((ch, i) => (
     <span key={i} className="char inline-block" style={{ opacity: 0 }}>
@@ -473,7 +588,8 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-      {/* ── 3D Animated Sphere Background ── */}
+
+      {/* ── Sphere Background ── */}
       <div ref={bgRef} className="absolute inset-0" style={{ opacity: 0 }}>
         <SphereBackground />
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 70% at 50% 48%, transparent 25%, var(--bg) 100%)" }} />
@@ -484,39 +600,27 @@ export default function Hero() {
       {/* ── Content ── */}
       <div className="hero-content container-custom relative z-10 py-32 md:py-0">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_420px]">
+
+          {/* Left: Text */}
           <div>
             <div ref={tagRef} className="mono-label mb-6" style={{ opacity: 0 }}>
               Full Stack Developer
             </div>
 
-            {/* Name — letter-by-letter 3D flip */}
             <div ref={nameRef} className="text-sm md:text-base tracking-[0.2em] uppercase text-[var(--fg-secondary)] mb-6 font-mono">
               {nameChars}
             </div>
 
-            {/* Headline */}
             <h1 className="text-[clamp(2.8rem,9vw,7.5rem)] font-bold tracking-tighter leading-[0.95] mb-8">
               <span className="block overflow-hidden" style={{ perspective: "800px" }}>
-                <span
-                  ref={word1Ref}
-                  className="block"
-                  style={{ opacity: 0, transformOrigin: "center bottom" }}
-                >
+                <span ref={word1Ref} className="block" style={{ opacity: 0, transformOrigin: "center bottom" }}>
                   I build
                 </span>
               </span>
               <span className="block overflow-hidden" style={{ perspective: "800px" }}>
-                <span
-                  ref={word2Ref}
-                  className="block"
-                  style={{ opacity: 0, transformOrigin: "center bottom" }}
-                >
+                <span ref={word2Ref} className="block" style={{ opacity: 0, transformOrigin: "center bottom" }}>
                   <span className="relative inline-block">
-                    <span
-                      ref={word3Ref}
-                      className="text-[var(--accent)]"
-                      style={{ opacity: 0 }}
-                    >
+                    <span ref={word3Ref} className="text-[var(--accent)]" style={{ opacity: 0 }}>
                       modern
                     </span>
                     <span
@@ -536,12 +640,7 @@ export default function Hero() {
 
             <div ref={ctaRef} className="flex flex-wrap gap-4" style={{ opacity: 0 }}>
               <Button href="#projects" variant="primary">View Work</Button>
-              <Button
-                href="/AhmedElkatiri_CV.pdf"
-                variant="download"
-                download
-                className="min-w-[11.5rem]"
-              >
+              <Button href="/AhmedElkatiri_CV.pdf" variant="download" download className="min-w-[11.5rem]">
                 <HiOutlineArrowDownTray className="text-base transition-transform duration-300 group-hover:translate-y-0.5" />
                 <span>Download CV</span>
               </Button>
@@ -549,39 +648,131 @@ export default function Hero() {
             </div>
           </div>
 
-          <div ref={imageRef} className="relative mx-auto flex w-full max-w-[26rem] justify-center lg:max-w-none lg:justify-end" style={{ opacity: 0, perspective: "1600px" }}>
-            {/* Ambient glow */}
-            <div ref={imageGlowRef} className="absolute inset-x-6 bottom-0 h-32 rounded-full bg-[var(--accent)]/25 blur-[60px]" />
-            <div className="absolute left-1/2 top-1/4 h-40 w-40 -translate-x-1/2 rounded-full bg-[var(--accent)]/10 blur-[80px]" />
-
-            {/* Animated rotating border */}
+          {/* ════════════════════════════════════════════
+              Right: Premium Image System
+              ════════════════════════════════════════════ */}
+          <div
+            ref={imageWrapperRef}
+            className="relative mx-auto flex w-full max-w-[26rem] justify-center lg:max-w-none lg:justify-end"
+            style={{ opacity: 0, perspective: "1800px", perspectiveOrigin: "50% 40%" }}
+          >
+            {/* ── Ambient glow blobs ── */}
             <div
-              ref={imageBorderRef}
-              className="absolute -inset-[2px] rounded-[2.15rem] opacity-0"
-              style={{ padding: "2px", WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }}
+              ref={imageGlowRef}
+              className="absolute bottom-[-10%] left-[10%] right-[10%] h-[45%] rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(ellipse at center, var(--accent) 0%, transparent 70%)",
+                filter: "blur(55px)",
+                opacity: 0,
+              }}
+            />
+            <div
+              ref={imageGlow2Ref}
+              className="absolute top-[-5%] left-[20%] h-[30%] w-[60%] rounded-full pointer-events-none"
+              style={{
+                background: "radial-gradient(ellipse at center, rgba(196,248,42,0.35) 0%, transparent 70%)",
+                filter: "blur(40px)",
+                opacity: 0,
+              }}
             />
 
+            {/* ── Aurora rotating border (moved to wrap image only) ── */}
+
+            {/* ── 3D Tilt Rig ── */}
             <div
-              ref={imageCardRef}
-              className="relative aspect-[4/5] w-full max-w-[23rem] overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[linear-gradient(160deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02)_50%,rgba(255,255,255,0.05))] p-2.5 shadow-[0_40px_100px_rgba(0,0,0,0.45),_0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-lg [transform-style:preserve-3d]"
+              ref={imageRigRef}
+              className="relative w-full max-w-[23rem]"
+              style={{ transformStyle: "preserve-3d" }}
             >
-              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/10 to-transparent rounded-t-[2rem] pointer-events-none" />
-              <div className="relative h-full w-full overflow-hidden rounded-[1.4rem] bg-[var(--surface-2)]">
-                {/* Shine sweep */}
-                <div ref={imageShineRef} className="absolute inset-y-0 -left-1/3 z-10 w-1/3 -skew-x-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] opacity-0" />
-                {/* Inner image with counter-parallax */}
-                <div ref={imageInnerRef} className="relative h-full w-full [will-change:transform]">
-                  <Image
-                    src="/ahmed.png"
-                    alt="Ahmed Elkatiri portrait"
-                    fill
-                    priority
-                    className="object-cover object-center"
-                    sizes="(max-width: 1024px) 24rem, 420px"
+              {/* ── Clip-path reveal mask ── */}
+              <div
+                ref={imageMaskRef}
+                className="relative aspect-[4/5] w-full"
+                style={{ clipPath: "inset(100% 0% 0% 0% round 2rem)" }}
+              >
+                {/* ── Glass card shell ── */}
+                <div
+                  ref={imageCardRef}
+                  className="absolute inset-0 overflow-hidden rounded-[2rem] border border-[var(--border)] p-2.5"
+                  style={{
+                    opacity: 0,
+                    background: "linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.06) 100%)",
+                    boxShadow: "0 50px 120px rgba(0,0,0,0.5), 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)",
+                    backdropFilter: "blur(12px)",
+                  }}
+                >
+                  {/* Top specular highlight */}
+                  <div className="absolute inset-x-0 top-0 h-28 rounded-t-[2rem] pointer-events-none"
+                    style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.12), transparent)" }} />
+
+                  {/* Aurora border wraps image only */}
+                  <div
+                    ref={imageAuroraRef}
+                    className="absolute -inset-1 rounded-[1.5rem] pointer-events-none z-10"
+                    style={{
+                      opacity: 0,
+                      padding: "2px",
+                      WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                    }}
                   />
+
+                  {/* Inner photo area */}
+                  <div className="relative h-full w-full overflow-hidden rounded-[1.4rem] bg-[var(--surface-2)]">
+
+                    {/* Scanline sweep — a thin bright horizontal bar */}
+                    <div
+                      ref={imageScanRef}
+                      className="absolute inset-x-0 z-20 pointer-events-none"
+                      style={{
+                        top: 0,
+                        height: "3px",
+                        opacity: 0,
+                        background: "linear-gradient(90deg, transparent 0%, rgba(196,248,42,0.9) 40%, rgba(255,255,255,0.95) 50%, rgba(196,248,42,0.9) 60%, transparent 100%)",
+                        boxShadow: "0 0 20px 6px rgba(196,248,42,0.4), 0 0 60px 15px rgba(196,248,42,0.15)",
+                        filter: "blur(0.5px)",
+                      }}
+                    />
+
+                    {/* Photo with counter-parallax */}
+                    <div ref={imageInnerRef} className="relative h-full w-full" style={{ willChange: "transform" }}>
+                      <Image
+                        src="/ahmed.png"
+                        alt="Ahmed Elkatiri portrait"
+                        fill
+                        priority
+                        className="object-cover object-center"
+                        sizes="(max-width: 1024px) 24rem, 420px"
+                      />
+                    </div>
+
+                    {/* Bottom vignette */}
+                    <div className="absolute inset-x-0 bottom-0 h-36 pointer-events-none"
+                      style={{ background: "linear-gradient(to top, rgba(0,0,0,0.30), transparent)" }} />
+
+                    {/* Glass sheen overlay */}
+                    <div
+                      ref={imageOverlayRef}
+                      className="absolute inset-0 pointer-events-none rounded-[1.4rem]"
+                      style={{
+                        opacity: 0,
+                        background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(196,248,42,0.03) 100%)",
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/25 to-transparent pointer-events-none" />
               </div>
+
+              {/* ── Depth shadow plane (below card in 3D space) ── */}
+              <div
+                className="absolute inset-x-4 -bottom-8 h-12 rounded-full pointer-events-none"
+                style={{
+                  background: "rgba(0,0,0,0.35)",
+                  filter: "blur(24px)",
+                  transform: "translateZ(-30px) scaleX(0.85)",
+                }}
+              />
             </div>
           </div>
         </div>
@@ -589,7 +780,7 @@ export default function Hero() {
         <div ref={dividerRef} className="mt-20 md:mt-28 h-px bg-[var(--border)] origin-left" style={{ transform: "scaleX(0)" }} />
       </div>
 
-      {/* Scroll indicator */}
+      {/* ── Scroll indicator ── */}
       <div ref={scrollRef} className="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-2" style={{ opacity: 0 }}>
         <span className="mono-label">Scroll</span>
         <span className="block w-px h-8 bg-[var(--muted)] animate-pulse" />

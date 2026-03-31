@@ -3,6 +3,7 @@
 import ThemeProvider from "@/components/ThemeProvider";
 import CustomCursor from "@/components/ui/CustomCursor";
 import DownloadCelebration from "@/components/ui/DownloadCelebration";
+import ContactCelebration from "@/components/ui/ContactCelebration";
 import FloatingContact from "@/components/ui/FloatingContact";
 import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
@@ -18,6 +19,7 @@ export default function Home() {
     <ThemeProvider>
       <CustomCursor />
       <DownloadCelebration />
+      <ContactCelebration />
       <FloatingContact />
       <Navbar />
       <main>
