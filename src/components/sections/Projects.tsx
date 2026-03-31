@@ -146,7 +146,6 @@ export default function Projects() {
                 {/* Tech */}
                 <div className="flex flex-wrap gap-2 pt-2">
                   {project.tech.map((t) => {
-                    // Color map for backgrounds and text in both modes
                     const colorMap = {
                       "React": {
                         dark: { bg: "rgba(97,218,251,0.18)", text: "#61dafb" },
@@ -201,11 +200,14 @@ export default function Projects() {
                         light: { bg: "rgba(119,123,180,0.13)", text: "#3730a3" },
                       },
                     };
-                    // Detect theme (dark or light)
-                    let theme = typeof window !== "undefined" && document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
-                    // SSR fallback: prefer dark
+                    let theme: "dark" | "light" = typeof window !== "undefined" && document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
                     if (typeof window === "undefined") theme = "dark";
-                    const { bg, text } = (colorMap[t] && colorMap[t][theme]) || { bg: theme === "dark" ? "rgba(243,244,246,0.18)" : "rgba(243,244,246,0.13)", text: theme === "dark" ? "#e5e7eb" : "#222" };
+                    const techKey = t as keyof typeof colorMap;
+                    const colorEntry = colorMap[techKey];
+                    const fallback = { bg: theme === "dark" ? "rgba(243,244,246,0.18)" : "rgba(243,244,246,0.13)", text: theme === "dark" ? "#e5e7eb" : "#222" };
+                    const { bg, text } = (colorEntry && typeof colorEntry === "object" && (theme in colorEntry)
+                      ? (colorEntry as Record<"dark"|"light", {bg:string;text:string}>)[theme]
+                      : fallback);
                     return (
                       <span
                         key={t}
