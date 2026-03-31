@@ -95,7 +95,7 @@ export const projects = [
     title:"Invoices Generator",
     description:"A web application that allows users to create and manage invoices  and PDF export functionality.",
     tech:["Next.js", "Tailwind CSS", "Supabase"],
-    image:"/projects/invoices.png",
+    image:"/projects/Invoices.png",
     demo:"https://invoice-generator-iota-dusky.vercel.app/",
     github:"https://github.com/elkatiri/Invoices",
   }
