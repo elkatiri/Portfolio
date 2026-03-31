@@ -17,6 +17,7 @@ import {
   SiWordpress,
   SiSlack,
   SiJira,
+  SiSupabase,
 } from "react-icons/si";
 import { VscVscode } from "react-icons/vsc";
 import {
@@ -73,6 +74,7 @@ export const techStack = [
       { name: "GitHub", icon: SiGithub, color: "currentColor" },
       { name: "Cloudinary", icon: SiCloudinary, color: "#3448C5" },
       { name: "Postman", icon: SiPostman, color: "#FF6C37" },
+      { name: "Supabase", icon: SiSupabase, color: "#3ECF8E" },
     ],
   },
   {
@@ -90,6 +92,14 @@ export const techStack = [
 
 export const projects = [
   {
+    title:"Invoices Generator",
+    description:"A web application that allows users to create and manage invoices  and PDF export functionality.",
+    tech:["Next.js", "Tailwind CSS", "Supabase"],
+    image:"/projects/invoices.png",
+    demo:"https://invoice-generator-iota-dusky.vercel.app/",
+    github:"https://github.com/elkatiri/Invoices",
+  }
+  ,{
     title: "Marketplace App",
     description:
       "A full-featured marketplace platform with real-time messaging, image uploads via Cloudinary, and a responsive storefront built on the MERN stack.",

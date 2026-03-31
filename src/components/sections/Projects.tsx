@@ -145,14 +145,77 @@ export default function Projects() {
 
                 {/* Tech */}
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {project.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[11px] px-3 py-1 rounded-full border border-[var(--border)] text-[var(--muted)] font-medium"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                  {project.tech.map((t) => {
+                    // Color map for backgrounds and text in both modes
+                    const colorMap = {
+                      "React": {
+                        dark: { bg: "rgba(97,218,251,0.18)", text: "#61dafb" },
+                        light: { bg: "rgba(97,218,251,0.13)", text: "#2563eb" },
+                      },
+                      "Next.js": {
+                        dark: { bg: "rgba(30,30,30,0.18)", text: "#fff" },
+                        light: { bg: "rgba(0,0,0,0.08)", text: "#222" },
+                      },
+                      "Tailwind CSS": {
+                        dark: { bg: "rgba(6,182,212,0.18)", text: "#06b6d4" },
+                        light: { bg: "rgba(6,182,212,0.13)", text: "#0e7490" },
+                      },
+                      "Supabase": {
+                        dark: { bg: "rgba(62,207,142,0.18)", text: "#3ECF8E" },
+                        light: { bg: "rgba(62,207,142,0.13)", text: "#17855a" },
+                      },
+                      "Node.js": {
+                        dark: { bg: "rgba(51,153,51,0.18)", text: "#22c55e" },
+                        light: { bg: "rgba(51,153,51,0.13)", text: "#166534" },
+                      },
+                      "Express": {
+                        dark: { bg: "rgba(34,34,34,0.18)", text: "#fff" },
+                        light: { bg: "rgba(34,34,34,0.08)", text: "#222" },
+                      },
+                      "MongoDB": {
+                        dark: { bg: "rgba(71,162,72,0.18)", text: "#22d3ee" },
+                        light: { bg: "rgba(71,162,72,0.13)", text: "#166534" },
+                      },
+                      "MySQL": {
+                        dark: { bg: "rgba(68,121,161,0.18)", text: "#60a5fa" },
+                        light: { bg: "rgba(68,121,161,0.13)", text: "#1e40af" },
+                      },
+                      "Cloudinary": {
+                        dark: { bg: "rgba(52,72,197,0.18)", text: "#6366f1" },
+                        light: { bg: "rgba(52,72,197,0.13)", text: "#3730a3" },
+                      },
+                      "Postman": {
+                        dark: { bg: "rgba(255,108,55,0.18)", text: "#fb923c" },
+                        light: { bg: "rgba(255,108,55,0.13)", text: "#b45309" },
+                      },
+                      "Socket.io": {
+                        dark: { bg: "rgba(1,1,1,0.13)", text: "#fff" },
+                        light: { bg: "rgba(1,1,1,0.08)", text: "#222" },
+                      },
+                      "Laravel": {
+                        dark: { bg: "rgba(255,45,32,0.18)", text: "#f87171" },
+                        light: { bg: "rgba(255,45,32,0.13)", text: "#991b1b" },
+                      },
+                      "PHP": {
+                        dark: { bg: "rgba(119,123,180,0.18)", text: "#a5b4fc" },
+                        light: { bg: "rgba(119,123,180,0.13)", text: "#3730a3" },
+                      },
+                    };
+                    // Detect theme (dark or light)
+                    let theme = typeof window !== "undefined" && document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+                    // SSR fallback: prefer dark
+                    if (typeof window === "undefined") theme = "dark";
+                    const { bg, text } = (colorMap[t] && colorMap[t][theme]) || { bg: theme === "dark" ? "rgba(243,244,246,0.18)" : "rgba(243,244,246,0.13)", text: theme === "dark" ? "#e5e7eb" : "#222" };
+                    return (
+                      <span
+                        key={t}
+                        className="text-[11px] px-3 py-1 rounded-full border border-[var(--border)] font-medium"
+                        style={{ background: bg, color: text }}
+                      >
+                        {t}
+                      </span>
+                    );
+                  })}
                 </div>
 
                 {/* Links */}
