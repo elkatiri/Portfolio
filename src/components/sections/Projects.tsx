@@ -14,82 +14,138 @@ if (typeof window !== "undefined") {
 
 export default function Projects() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
 
     const cards = el.querySelectorAll<HTMLElement>("[data-project-card]");
+    const glow = glowRef.current;
 
     const ctx = gsap.context(() => {
-      cards.forEach((card) => {
+      cards.forEach((card, index) => {
         const imageEl = card.querySelector("[data-project-image]");
         const contentEls = card.querySelectorAll("[data-project-content] > *");
+        const frameEl = card.querySelector("[data-project-frame]");
+        const direction = index % 2 === 0 ? 1 : -1;
 
-        // Premium fade+scale entrance for card
         gsap.set(card, {
           opacity: 0,
-          y: 40,
+          y: 72,
+          x: direction * 56,
         });
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 1.1,
-          ease: "power2.out",
+        gsap.set(frameEl, { scaleX: 0, transformOrigin: direction === 1 ? "left center" : "right center" });
+
+        if (imageEl) {
+          gsap.set(imageEl, {
+            scale: 1.12,
+            opacity: 0,
+            y: 36,
+            rotateZ: direction * 1.8,
+            clipPath: "inset(14% 0% 18% 0% round 1.25rem)",
+          });
+        }
+
+        gsap.set(contentEls, { opacity: 0, y: 36, x: direction * 26, filter: "blur(8px)" });
+
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: card,
-            start: "top 85%",
-            end: "top 40%",
+            start: "top 84%",
             toggleActions: "play none none none",
           },
         });
 
-        // Premium image effect: subtle scale+parallax on scroll
-        if (imageEl) {
-          gsap.set(imageEl, { scale: 1.04, opacity: 0, y: 30 });
-          gsap.to(imageEl, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-              end: "top 40%",
-              toggleActions: "play none none none",
+        tl.to(card, {
+          opacity: 1,
+          y: 0,
+          x: 0,
+          duration: 1,
+          ease: "expo.out",
+        })
+          .to(
+            frameEl,
+            {
+              scaleX: 1,
+              duration: 0.9,
+              ease: "power2.out",
             },
-          });
-          // Parallax on scroll
+            "<0.1"
+          );
+
+        if (imageEl) {
+          tl.to(
+            imageEl,
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              rotateZ: 0,
+              clipPath: "inset(0% 0% 0% 0% round 1.25rem)",
+              duration: 1.25,
+              ease: "expo.out",
+            },
+            "<"
+          );
+
           gsap.to(imageEl, {
-            yPercent: 8,
+            yPercent: 10,
             ease: "none",
             scrollTrigger: {
               trigger: card,
               start: "top bottom",
               end: "bottom top",
-              scrub: 1.2,
+              scrub: 1.15,
             },
           });
         }
 
-        // Staggered content reveal (keep)
-        if (contentEls.length) {
-          gsap.set(contentEls, { opacity: 0, y: 30 });
-          gsap.to(contentEls, {
+        tl.to(
+          contentEls,
+          {
             opacity: 1,
             y: 0,
-            duration: 0.7,
+            x: 0,
+            filter: "blur(0px)",
+            duration: 0.72,
             stagger: 0.1,
             ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 70%",
-              toggleActions: "play none none none",
-            },
-          });
-        }
+          },
+          "-=0.7"
+        );
+
+        gsap.to(card, {
+          yPercent: index % 2 === 0 ? -6 : 6,
+          rotateZ: direction * 0.45,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
       });
+
+      if (glow) {
+        gsap.fromTo(
+          glow,
+          { scale: 0.86, opacity: 0.18, yPercent: -10 },
+          {
+            scale: 1.08,
+            opacity: 0.42,
+            yPercent: 18,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.3,
+            },
+          }
+        );
+      }
     }, el);
 
     return () => ctx.revert();
@@ -97,7 +153,17 @@ export default function Projects() {
 
   return (
     <section id="projects" className="section-padding section-border" style={{ perspective: "1400px" }}>
-      <div className="container-custom">
+      <div className="container-custom relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-24 flex justify-center">
+          <div
+            ref={glowRef}
+            className="h-72 w-[min(46rem,92vw)] rounded-full"
+            style={{
+              background: "radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent) 0%, transparent 72%)",
+              filter: "blur(28px)",
+            }}
+          />
+        </div>
         <SectionHeading
           number="03"
           title="Work"
@@ -109,9 +175,14 @@ export default function Projects() {
             <div
               key={project.title}
               data-project-card
-              className="grid md:grid-cols-2 gap-8 md:gap-12 items-center will-change-transform"
+              className="relative grid md:grid-cols-2 gap-8 md:gap-12 items-center will-change-transform"
               style={{ transformStyle: "preserve-3d" }}
             >
+              <div
+                data-project-frame
+                className="pointer-events-none absolute left-0 right-0 top-0 h-px opacity-70"
+                style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent)", transform: "scaleX(0)" }}
+              />
               {/* Image */}
               <div
                 data-project-image
@@ -199,20 +270,43 @@ export default function Projects() {
                         dark: { bg: "rgba(119,123,180,0.18)", text: "#a5b4fc" },
                         light: { bg: "rgba(119,123,180,0.13)", text: "#3730a3" },
                       },
+                      "WordPress": {
+                        dark: { bg: "rgba(33,117,155,0.2)", text: "#7dd3fc" },
+                        light: { bg: "rgba(33,117,155,0.14)", text: "#0c4a6e" },
+                      },
+                      "WooCommerce": {
+                        dark: { bg: "rgba(135,88,216,0.2)", text: "#c4b5fd" },
+                        light: { bg: "rgba(135,88,216,0.14)", text: "#6b21a8" },
+                      },
+                      "WP Travel Engine": {
+                        dark: { bg: "rgba(14,165,140,0.2)", text: "#5eead4" },
+                        light: { bg: "rgba(14,165,140,0.14)", text: "#0f766e" },
+                      },
+                      "Framer Motion": {
+                        dark: { bg: "rgba(168,85,247,0.18)", text: "#d8b4fe" },
+                        light: { bg: "rgba(168,85,247,0.13)", text: "#7e22ce" },
+                      },
                     };
                     let theme: "dark" | "light" = typeof window !== "undefined" && document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
                     if (typeof window === "undefined") theme = "dark";
                     const techKey = t as keyof typeof colorMap;
                     const colorEntry = colorMap[techKey];
-                    const fallback = { bg: theme === "dark" ? "rgba(243,244,246,0.18)" : "rgba(243,244,246,0.13)", text: theme === "dark" ? "#e5e7eb" : "#222" };
+                    const fallback = {
+                      bg: theme === "dark" ? "rgba(243,244,246,0.12)" : "rgba(15,23,42,0.08)",
+                      text: theme === "dark" ? "#f8fafc" : "#0f172a",
+                    };
                     const { bg, text } = (colorEntry && typeof colorEntry === "object" && (theme in colorEntry)
                       ? (colorEntry as Record<"dark"|"light", {bg:string;text:string}>)[theme]
                       : fallback);
                     return (
                       <span
                         key={t}
-                        className="text-[11px] px-3 py-1 rounded-full border border-[var(--border)] font-medium"
-                        style={{ background: bg, color: text }}
+                        className="text-[11px] px-3 py-1 rounded-full border font-medium"
+                        style={{
+                          background: bg,
+                          color: text,
+                          borderColor: theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.09)",
+                        }}
                       >
                         {t}
                       </span>

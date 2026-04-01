@@ -136,7 +136,7 @@ export const projects = [
     github: "https://github.com/elkatiri/Startup",
   },
   {
-    title:"Ecoommerce Store",
+    title:"Ecommerce Store",
     description:"a store built with wordpress and woocommerce, with custom theme development and plugin integrations.",
     tech:["WordPress", "WooCommerce"],
     image:"/projects/ecommerce.png",

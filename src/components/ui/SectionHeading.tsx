@@ -20,7 +20,7 @@ export default function SectionHeading({
   return (
     <div
       ref={ref}
-      className={`mb-14 md:mb-20 ${align === "center" ? "text-center" : "text-left"}`}
+      className={`section-pin-target mb-14 md:mb-20 ${align === "center" ? "text-center" : "text-left"}`}
     >
       {number && (
         <span data-animate className="mono-label mb-4 block">

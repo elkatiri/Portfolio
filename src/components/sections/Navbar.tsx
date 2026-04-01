@@ -13,6 +13,7 @@ import gsap from "gsap";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const { theme, toggleTheme } = useTheme();
   const navRef = useRef<HTMLElement>(null);
 
@@ -45,14 +46,26 @@ export default function Navbar() {
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div
+          className="hidden md:flex items-center gap-2 rounded-full border border-transparent bg-[color:color-mix(in_srgb,var(--surface)_30%,transparent)] px-2 py-1.5"
+          onMouseLeave={() => setHoveredLink(null)}
+        >
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-xs text-[var(--muted)] hover:text-[var(--fg)] transition-colors duration-200 cursor-hover"
+              onMouseEnter={() => setHoveredLink(link.href)}
+              className="group relative rounded-full px-4 py-2 text-xs text-[var(--muted)] transition-colors duration-300 hover:text-[var(--fg)] cursor-hover"
             >
+              {hoveredLink === link.href && (
+                <motion.span
+                  layoutId="navbar-hover"
+                  className="absolute inset-0 -z-10 rounded-full border border-[color:color-mix(in_srgb,var(--accent)_20%,var(--border))] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface-2)_88%,transparent),color-mix(in_srgb,var(--accent-soft)_72%,transparent))] shadow-[0_10px_30px_rgba(0,0,0,0.16)]"
+                  transition={{ type: "spring", stiffness: 360, damping: 28, mass: 0.7 }}
+                />
+              )}
               {link.label}
+              <span className="absolute inset-x-4 -bottom-px h-px origin-center scale-x-0 bg-[var(--accent)] transition-transform duration-300 group-hover:scale-x-100" />
             </a>
           ))}
           <a

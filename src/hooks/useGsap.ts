@@ -157,3 +157,86 @@ export function useGsapScale<T extends HTMLElement>() {
 
   return ref;
 }
+
+/**
+ * Hook for page-level section transitions with desktop pinning and mobile-safe fallbacks.
+ */
+export function useGsapSectionTransitions<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    const sections = Array.from(root.querySelectorAll<HTMLElement>(":scope > section"));
+    if (sections.length === 0) return;
+
+    const mm = gsap.matchMedia();
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const buildSectionTransitions = (withPinning: boolean) => {
+      const ctx = gsap.context(() => {
+        sections.forEach((section, index) => {
+          if (index === 0) return;
+
+          const pinTarget = section.querySelector<HTMLElement>(".section-pin-target");
+
+          gsap.set(section, {
+            opacity: withPinning ? 0.42 : 0.78,
+            y: withPinning ? 110 : 42,
+            scale: withPinning ? 0.965 : 0.985,
+            filter: withPinning ? "blur(12px)" : "blur(4px)",
+            transformOrigin: "center top",
+            willChange: "transform, opacity, filter",
+          });
+
+          gsap.to(section, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: withPinning ? "top 92%" : "top 88%",
+              end: withPinning ? "top 38%" : "top 62%",
+              scrub: withPinning ? 1.15 : 0.7,
+            },
+          });
+
+          gsap.to(section, {
+            yPercent: withPinning ? -6 : -2,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: withPinning ? 1.2 : 0.8,
+            },
+          });
+
+          if (withPinning && pinTarget && section.id !== "projects" && section.id !== "contact") {
+            ScrollTrigger.create({
+              trigger: section,
+              start: "top 14%",
+              end: "bottom 55%",
+              pin: pinTarget,
+              pinSpacing: false,
+              anticipatePin: 1,
+            });
+          }
+        });
+      }, root);
+
+      return () => ctx.revert();
+    };
+
+    mm.add("(min-width: 1024px)", () => buildSectionTransitions(true));
+    mm.add("(max-width: 1023px)", () => buildSectionTransitions(false));
+
+    return () => mm.revert();
+  }, []);
+
+  return ref;
+}
