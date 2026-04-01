@@ -180,6 +180,12 @@ export function useGsapSectionTransitions<T extends HTMLElement>() {
         sections.forEach((section, index) => {
           if (index === 0) return;
 
+          const shouldAnimateAtPageLevel =
+            section.id === "projects" ||
+            section.id === "workflow" ||
+            section.id === "contact";
+          if (!shouldAnimateAtPageLevel) return;
+
           const pinTarget = section.querySelector<HTMLElement>(".section-pin-target");
 
           gsap.set(section, {
@@ -216,7 +222,7 @@ export function useGsapSectionTransitions<T extends HTMLElement>() {
             },
           });
 
-          if (withPinning && pinTarget && section.id !== "projects" && section.id !== "contact") {
+          if (withPinning && pinTarget && section.id === "workflow") {
             ScrollTrigger.create({
               trigger: section,
               start: "top 14%",
