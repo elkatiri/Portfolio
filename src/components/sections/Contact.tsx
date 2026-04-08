@@ -1,21 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { triggerContactCelebration } from "@/lib/contactCelebration";
 import { FiSend, FiGithub, FiLinkedin, FiMail, FiArrowUpRight, FiCheck } from "react-icons/fi";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { socialLinks } from "@/data/portfolio";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 export default function Contact() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const orbRef = useRef<HTMLDivElement>(null);
+  const fieldPrefix = useId();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,101 +15,10 @@ export default function Contact() {
   });
   const [focused, setFocused] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    const grid = gridRef.current;
-    const orb = orbRef.current;
-    if (!section || !grid) return;
-
-    const formCol = grid.querySelector<HTMLElement>("[data-contact-form]");
-    const infoCol = grid.querySelector<HTMLElement>("[data-contact-info]");
-    const fields = grid.querySelectorAll<HTMLElement>("[data-contact-field]");
-    const socials = grid.querySelectorAll<HTMLElement>("[data-contact-social]");
-
-    const ctx = gsap.context(() => {
-      gsap.set(formCol, { opacity: 0, x: -54, y: 30, rotateY: 10, transformPerspective: 1000 });
-      gsap.set(infoCol, { opacity: 0, x: 54, y: 30, rotateY: -10, transformPerspective: 1000 });
-      gsap.set(fields, { opacity: 0, y: 28, filter: "blur(6px)" });
-      gsap.set(socials, { opacity: 0, y: 24, x: 20 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top 78%",
-          toggleActions: "play none none none",
-        },
-      });
-
-      tl.to(formCol, {
-        opacity: 1,
-        x: 0,
-        y: 0,
-        rotateY: 0,
-        duration: 1.05,
-        ease: "expo.out",
-      })
-        .to(
-          infoCol,
-          {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            rotateY: 0,
-            duration: 1.05,
-            ease: "expo.out",
-          },
-          "<0.1"
-        )
-        .to(
-          fields,
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.58,
-            stagger: 0.08,
-            ease: "power2.out",
-          },
-          "-=0.55"
-        )
-        .to(
-          socials,
-          {
-            opacity: 1,
-            y: 0,
-            x: 0,
-            duration: 0.6,
-            stagger: 0.08,
-            ease: "power2.out",
-          },
-          "-=0.45"
-        );
-
-      if (orb) {
-        gsap.fromTo(
-          orb,
-          { yPercent: -20, xPercent: -12, opacity: 0.18, scale: 0.8 },
-          {
-            yPercent: 18,
-            xPercent: 12,
-            opacity: 0.44,
-            scale: 1.08,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1.3,
-            },
-          }
-        );
-      }
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
+  const nameId = `${fieldPrefix}-name`;
+  const emailId = `${fieldPrefix}-email`;
+  const messageId = `${fieldPrefix}-message`;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -144,10 +45,9 @@ export default function Contact() {
   };
 
   return (
-    <section ref={sectionRef} id="contact" className="section-padding section-border relative overflow-hidden">
+    <section id="contact" className="section-padding section-border relative overflow-hidden">
       <div className="pointer-events-none absolute inset-x-0 top-16 flex justify-end">
         <div
-          ref={orbRef}
           className="mr-[max(2rem,6vw)] h-72 w-72 rounded-full"
           style={{
             background: "radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 72%)",
@@ -162,17 +62,13 @@ export default function Contact() {
           subtitle="Have a project in mind? Let's talk"
         />
 
-        <div
-          ref={gridRef}
-          className="grid md:grid-cols-5 gap-12 lg:gap-16 items-start"
-        >
-          {/* Form — takes 3 cols */}
+        <div className="grid md:grid-cols-5 gap-12 lg:gap-16 items-start">
           <div data-contact-form className="md:col-span-3">
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 md:p-12">
-              <form ref={formRef} onSubmit={handleSubmit} className="space-y-10">
-                {/* Name field */}
+              <form onSubmit={handleSubmit} className="space-y-10">
                 <div data-contact-field className="relative">
                   <label
+                    htmlFor={nameId}
                     className={`absolute left-4 transition-all duration-200 pointer-events-none ${
                       focused === "name" || formData.name
                         ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
@@ -182,6 +78,8 @@ export default function Contact() {
                     Name
                   </label>
                   <input
+                    id={nameId}
+                    name="name"
                     type="text"
                     required
                     className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
@@ -194,9 +92,9 @@ export default function Contact() {
                   />
                 </div>
 
-                {/* Email field */}
                 <div data-contact-field className="relative">
                   <label
+                    htmlFor={emailId}
                     className={`absolute left-4 transition-all duration-200 pointer-events-none ${
                       focused === "email" || formData.email
                         ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
@@ -206,8 +104,11 @@ export default function Contact() {
                     Email
                   </label>
                   <input
+                    id={emailId}
+                    name="email"
                     type="email"
                     required
+                    autoComplete="email"
                     className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
                     value={formData.email}
                     onFocus={() => setFocused("email")}
@@ -218,9 +119,9 @@ export default function Contact() {
                   />
                 </div>
 
-                {/* Message field */}
                 <div data-contact-field className="relative">
                   <label
+                    htmlFor={messageId}
                     className={`absolute left-4 transition-all duration-200 pointer-events-none ${
                       focused === "message" || formData.message
                         ? "top-2.5 text-[10px] tracking-wider uppercase text-[var(--accent)]"
@@ -230,6 +131,8 @@ export default function Contact() {
                     Message
                   </label>
                   <textarea
+                    id={messageId}
+                    name="message"
                     required
                     rows={5}
                     className="w-full bg-[var(--surface-2)] border border-[var(--border)] rounded-xl px-4 pt-7 pb-3 text-[var(--fg)] text-sm focus:outline-none focus:border-[var(--accent)] transition-colors duration-200 resize-none"
@@ -266,7 +169,6 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Info — takes 2 cols */}
           <div data-contact-info className="md:col-span-2 space-y-8">
             <div className="space-y-4">
               <h3 className="text-2xl md:text-3xl font-semibold text-[var(--fg)] leading-tight">
@@ -280,7 +182,6 @@ export default function Contact() {
               </p>
             </div>
 
-            {/* Social links as cards */}
             <div className="space-y-3">
               {[
                 { icon: FiGithub, label: "GitHub", href: socialLinks.github, value: "@ahmedelkatiri" },
