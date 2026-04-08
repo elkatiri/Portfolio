@@ -12,6 +12,7 @@ import About from "@/components/sections/About";
 import TechStack from "@/components/sections/TechStack";
 import Projects from "@/components/sections/Projects";
 import Workflow from "@/components/sections/Workflow";
+import Blog from "@/components/sections/Blog";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import { useGsapSectionTransitions } from "@/hooks/useGsap";
@@ -33,6 +34,7 @@ export default function Home() {
         <TechStack />
         <Projects />
         <Workflow />
+        <Blog />
         <Contact />
       </main>
       <Footer />
