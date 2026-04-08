@@ -41,7 +41,7 @@ export default function Navbar() {
     >
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="text-sm font-semibold tracking-tight text-[var(--fg)] cursor-hover">
+        <a href="/#hero" className="text-sm font-semibold tracking-tight text-[var(--fg)] cursor-hover">
           Ahmed Elkatiri
         </a>
 

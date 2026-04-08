@@ -639,12 +639,12 @@ export default function Hero() {
             </p>
 
             <div ref={ctaRef} className="flex flex-wrap gap-4" style={{ opacity: 0 }}>
-              <Button href="#projects" variant="primary">View Work</Button>
+              <Button href="/#projects" variant="primary">View Work</Button>
               <Button href="/AhmedElkatiri_CV.pdf" variant="download" download className="min-w-[11.5rem]">
                 <HiOutlineArrowDownTray className="text-base transition-transform duration-300 group-hover:translate-y-0.5" />
                 <span>Download CV</span>
               </Button>
-              <Button href="#contact" variant="outline">Get in Touch</Button>
+              <Button href="/#contact" variant="outline">Get in Touch</Button>
             </div>
           </div>
 
