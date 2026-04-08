@@ -28,6 +28,7 @@ import {
   HiOutlineCheckCircle,
 } from "react-icons/hi";
 import { type IconType } from "react-icons";
+import { desc } from "framer-motion/client";
 
 export const navLinks = [
   { label: "Home", href: "#hero" },
