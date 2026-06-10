@@ -90,6 +90,29 @@ export default function About() {
           }
         );
       }
+
+      // Count-up for numeric stats
+      const statNums = content.querySelectorAll<HTMLElement>("[data-stat-number]");
+      statNums.forEach((el, i) => {
+        const target = parseInt(el.getAttribute("data-stat-number") || "0");
+        const suffix = el.getAttribute("data-stat-suffix") || "";
+        if (!target) return;
+        const counter = { val: 0 };
+        gsap.to(counter, {
+          val: target,
+          duration: 1.8,
+          ease: "power2.out",
+          delay: 0.55 + i * 0.15,
+          scrollTrigger: {
+            trigger: section,
+            start: "top 78%",
+            once: true,
+          },
+          onUpdate: () => {
+            el.textContent = Math.round(counter.val) + suffix;
+          },
+        });
+      });
     }, section);
 
     return () => ctx.revert();
@@ -161,13 +184,18 @@ export default function About() {
           {/* Stats */}
           <div className="flex gap-6 pt-6 border-t border-[var(--border)] md:gap-12">
             {[
-              { value: "10+", label: "Projects" },
-              { value: "8+", label: "Technologies" },
-              { value: "SaaS", label: "Focus" },
+              { display: "10+", target: 10, suffix: "+", label: "Projects" },
+              { display: "8+", target: 8, suffix: "+", label: "Technologies" },
+              { display: "SaaS", target: 0, suffix: "", label: "Focus" },
             ].map((stat) => (
               <div key={stat.label} data-about-stat>
-                <div className="text-3xl md:text-4xl font-bold text-[var(--fg)] leading-none">
-                  {stat.value}
+                <div
+                  className="text-3xl md:text-4xl font-bold text-[var(--fg)] leading-none"
+                  {...(stat.target > 0
+                    ? { "data-stat-number": stat.target, "data-stat-suffix": stat.suffix }
+                    : {})}
+                >
+                  {stat.display}
                 </div>
                 <div className="mono-label mt-2">{stat.label}</div>
               </div>

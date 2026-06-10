@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -92,25 +93,46 @@ export default function Workflow() {
           <div
             ref={railRef}
             className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 44%, transparent), transparent)", transform: "scaleX(0)" }}
+            style={{
+              background: "linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 44%, transparent), transparent)",
+              transform: "scaleX(0)",
+            }}
           />
-          {workflowSteps.map((step) => (
-            <div
-              key={step.step}
-              data-workflow-card
-              className="relative overflow-hidden p-6 bg-[var(--surface)] hover:bg-[var(--surface-2)] transition-colors duration-300 group"
-            >
+          {workflowSteps.map((step) => {
+            const StepIcon = step.icon;
+            return (
               <div
-                className="pointer-events-none absolute inset-y-0 left-0 w-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: "linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 38%, transparent), transparent)" }}
-              />
-              <span className="mono-label text-[var(--accent)] block mb-4">{step.step}</span>
-              <h3 className="font-semibold text-base text-[var(--fg)] mb-2 leading-snug">{step.title}</h3>
-              <p className="text-sm text-[var(--muted)] leading-relaxed">
-                {step.description}
-              </p>
-            </div>
-          ))}
+                key={step.step}
+                data-workflow-card
+                className="relative overflow-hidden p-6 bg-[var(--surface)] hover:bg-[var(--surface-2)] transition-colors duration-300 group"
+              >
+                <div
+                  className="pointer-events-none absolute inset-y-0 left-0 w-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: "linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 38%, transparent), transparent)",
+                  }}
+                />
+
+                <div className="mb-5 flex items-center gap-2.5">
+                  <motion.div
+                    className="flex items-center justify-center w-9 h-9 rounded-xl border"
+                    style={{
+                      background: "color-mix(in srgb, var(--accent) 8%, var(--surface-2))",
+                      borderColor: "color-mix(in srgb, var(--accent) 22%, var(--border))",
+                    }}
+                    whileHover={{ scale: 1.18, rotate: 8, y: -2 }}
+                    transition={{ type: "spring", stiffness: 420, damping: 18 }}
+                  >
+                    <StepIcon className="w-4 h-4 text-[var(--accent)]" />
+                  </motion.div>
+                  <span className="mono-label text-[var(--accent)]">{step.step}</span>
+                </div>
+
+                <h3 className="font-semibold text-base text-[var(--fg)] mb-2 leading-snug">{step.title}</h3>
+                <p className="text-sm text-[var(--muted)] leading-relaxed">{step.description}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

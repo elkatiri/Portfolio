@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -12,15 +13,24 @@ if (typeof window !== "undefined") {
 }
 
 function TechIcon({ Icon, color, name }: { Icon: IconType; color: string; name: string }) {
+  const glowColor = color === "currentColor" ? "#c4f82a" : color;
   return (
-    <div className="flex flex-col items-center gap-2.5 group cursor-hover tech-icon">
-      <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] transition-all duration-300 group-hover:border-[var(--accent)] group-hover:bg-[var(--surface-2)]">
+    <motion.div
+      className="flex flex-col items-center gap-2.5 group cursor-hover tech-icon"
+      whileHover={{ y: -7, scale: 1.09 }}
+      transition={{ type: "spring", stiffness: 400, damping: 22 }}
+    >
+      <motion.div
+        className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] transition-colors duration-300 group-hover:border-[var(--accent)] group-hover:bg-[var(--surface-2)]"
+        whileHover={{ boxShadow: `0 0 22px ${glowColor}55, 0 6px 20px rgba(0,0,0,0.22)` }}
+        transition={{ duration: 0.28 }}
+      >
         <Icon className="w-7 h-7 transition-colors duration-300" style={{ color }} />
-      </div>
+      </motion.div>
       <span className="text-[11px] text-[var(--muted)] group-hover:text-[var(--fg-secondary)] transition-colors font-medium">
         {name}
       </span>
-    </div>
+    </motion.div>
   );
 }
 
